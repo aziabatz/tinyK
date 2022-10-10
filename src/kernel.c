@@ -128,7 +128,7 @@ int _kmain(multiboot_info_t *multiboot,
         driver_t * vga = install_vga();
 
         driver_data_t ddata = {
-            .info = NULL,
+            .info = NULL,s
             .data = "Ahmed\t",
             .size = 6
         };
