@@ -24,8 +24,8 @@
  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
  OF SUCH DAMAGE.
  */
-#ifndef UNEXOS_TYPES_H
-#define UNEXOS_TYPES_H
+#ifndef TK_TYPES_H
+#define TK_TYPES_H
 
 typedef signed char int8;
 typedef unsigned char uint8;

@@ -24,8 +24,8 @@
  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
  OF SUCH DAMAGE.
  */
-#ifndef UNEXOS_DRIVER_H
-#define UNEXOS_DRIVER_H
+#ifndef TK_DRIVER_H
+#define TK_DRIVER_H
 
 #include <types.h>
 #include <stddef.h>

@@ -114,6 +114,7 @@ int *a =0xA0000000;
 
 #include <dev/io/screen/vga.h>
 #include <str.h>
+#include <cpu/task/gdt.h>
 
 int _kmain(multiboot_info_t *multiboot,
            uint32 magicnum,
@@ -139,7 +140,7 @@ int _kmain(multiboot_info_t *multiboot,
             vga->write(&ddata);
         }
 
-        strlen(ddata.data);
+        gdt_init();
 
         //TODO min libc
         //TODO gdt

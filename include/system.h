@@ -1,5 +1,5 @@
-#ifndef UNEXOS_SYSTEM_H
-#define UNEXOS_SYSTEM_H
+#ifndef TK_SYSTEM_H
+#define TK_SYSTEM_H
 
 //TODO LINES AND SENTENCES
 void kinfo(char * str);

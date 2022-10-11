@@ -24,8 +24,8 @@
  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
  OF SUCH DAMAGE.
  */
-#ifndef UNEXOS_VGA_H
-#define UNEXOS_VGA_H
+#ifndef TK_VGA_H
+#define TK_VGA_H
 
 #include <dev/driver.h>
 

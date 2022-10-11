@@ -25,8 +25,8 @@
  OF SUCH DAMAGE.
  */
 
-#ifndef UNEXOS_UTIL_H
-#define UNEXOS_UTIL_H
+#ifndef TK_UTIL_H
+#define TK_UTIL_H
 
 #define LOW_8(address) (uint8)((address) & 0xFF)
 #define LOW_16(address) (uint16)((address) & 0xFFFF)

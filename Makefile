@@ -1,7 +1,7 @@
 KERNEL_NAME = unexOS
 TARGET = $(KERNEL_NAME).bin
 
-ARCH = $(HOME)/opt/cross/bin/i686-elf
+ARCH = i686-elf
 CC = $(ARCH)-gcc
 AS = $(ARCH)-as
 LINKER = $(ARCH)-ld
