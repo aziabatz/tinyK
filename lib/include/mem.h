@@ -1,6 +1,9 @@
 #ifndef MINLIB_MEM_H
 #define MINLIB_MEM_H
 
+#include <stddef.h>
+#include <cast.h>
+
 //copia n caracteres hasta terminar o encontrar char de terminacion
 void * memccpy(void * dst, const void * src, unsigned char stop, size_t count);
 

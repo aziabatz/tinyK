@@ -45,7 +45,7 @@ struct vga_spec {
 
 typedef struct vga_spec vga_spec_t;
 
-#define FRAMEBUFFER 0xB8000
+#define FRAMEBUFFER (char *) 0xB8000
 #define FB_CHAR (color,ch) (uint16)(((color << 8) & 0xFF00) | ch)
 #define VGA_INDEX_PORT 0x3D4
 #define VGA_CHAR_PORT 0x3D5

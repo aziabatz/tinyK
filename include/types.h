@@ -42,9 +42,6 @@ typedef unsigned long long int uint64;
 //typedef char* string;
 
 //typedef unsigned int size_t;
-typedef __SIZE_TYPE__ size_t;
-typedef uint8 boolean;
-
 
 /* typedef struct timestr{
   uint32 hour;
@@ -54,13 +51,6 @@ typedef uint8 boolean;
 
 typedef uint32 posixtime_t; */
 
-
-
-
-
-#define NULL ((void *)0)
-#define true 1
-#define false 0
 
 //static int halt() { asm("jmp _stop"); }
 
