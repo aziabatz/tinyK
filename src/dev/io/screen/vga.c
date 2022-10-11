@@ -1,6 +1,7 @@
 #include <dev/io/screen/vga.h>
 #include <dev/io/port.h>
 #include <util.h>
+#include <stdbool.h>
 
 //screen related
 
@@ -71,7 +72,7 @@ void scroll_lines(uint16 lines)
     }
 }
 
-static inline boolean is_new_line()
+static inline bool is_new_line()
 {
     if(y >= vga_spec.height -1)
     {
@@ -125,7 +126,7 @@ static void putc(char c)
 }
 
 //driver related
-static boolean installed = false;
+static bool installed = false;
 static driver_info_t vga_info;
 static driver_t vga_driver;
 
@@ -172,7 +173,7 @@ driver_write_t * vga_write(driver_data_t * data)
 
     if(data->size == 0)
     {
-        return;
+        return NULL;
     }
 
     char * str = data->data;

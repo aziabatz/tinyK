@@ -1,7 +1,7 @@
 KERNEL_NAME = unexOS
 TARGET = $(KERNEL_NAME).bin
 
-ARCH = i686-elf
+ARCH = $(HOME)/opt/cross/bin/i686-elf
 CC = $(ARCH)-gcc
 AS = $(ARCH)-as
 LINKER = $(ARCH)-ld
@@ -9,13 +9,16 @@ LINKER = $(ARCH)-ld
 GRUB = grub
 MKISO = $(GRUB)-mkrescue
 
-CFLAGS = -m32 -g -I include/ -nostdlib -fno-builtin -fno-exceptions -fno-leading-underscore -Wno-write-strings -fno-stack-protector
+CFLAGS = -m32 -g $(foreach dir,$(INCLUDES),-I$(dir)) -nostdlib -fno-builtin -fno-exceptions -fno-leading-underscore -Wno-write-strings -fno-stack-protector
 ASFLAGS = --32 -g
 LDFLAGS = -m elf_i386
 
 SRCDIR = src
 OBJDIR = obj
 ISODIR = iso
+
+INCLUDES = ./include/ ./lib/include/
+LIBRARIES = ./lib/minlib.a
 
 define GRUB_ENTRY
 "set timeout=5\n\
@@ -29,8 +32,6 @@ endef
 
 .PHONY: all clean clean-iso clean-all iso mkobj
 
-#TODO phony rules
-
 ASM_SOURCES := $(shell find $(SRCDIR) -name \*.S)
 C_SOURCES := $(shell find $(SRCDIR) -name \*.c)
 
@@ -39,8 +40,6 @@ S_OBJECTS	:= $(ASM_SOURCES:$(SRCDIR)/%.S=$(OBJDIR)/%.s.o)
 
 all: mkobj $(TARGET)
 
-
-	
 $(C_OBJECTS): $(OBJDIR)/$(notdir %.o) : $(SRCDIR)/%.c
 	@$(CC) $(CFLAGS) -c $< -o $@
 	@echo [OK] Compiled $<!
@@ -62,9 +61,12 @@ mkobj:
 	@echo [OK] Generated objects directory tree!
 
 
-$(TARGET): $(C_OBJECTS) $(S_OBJECTS)
+$(TARGET): $(C_OBJECTS) $(S_OBJECTS) $(LIBRARIES)
 	@$(LINKER) $(LDFLAGS) -T link.ld -o $(TARGET) $^
 	@echo [OK] Successfully linked. Binary generated!
+
+$(LIBRARIES):
+	cd lib && $(MAKE)
 
 clean:
 	@rm -fv $(C_OBJECTS) $(S_OBJECTS)
@@ -74,4 +76,5 @@ clean-iso:
 
 clean-all:
 	$(MAKE) clean clean-iso
+	cd lib && $(MAKE) clean-all
 	@rm -rfv $(TARGET) $(OBJDIR)

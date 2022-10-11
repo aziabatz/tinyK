@@ -28,6 +28,7 @@
 #define UNEXOS_DRIVER_H
 
 #include <types.h>
+#include <stddef.h>
 
 struct driver_info
 {

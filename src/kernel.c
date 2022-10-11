@@ -113,6 +113,7 @@ int *a =0xA0000000;
  */
 
 #include <dev/io/screen/vga.h>
+#include <str.h>
 
 int _kmain(multiboot_info_t *multiboot,
            uint32 magicnum,
@@ -128,7 +129,7 @@ int _kmain(multiboot_info_t *multiboot,
         driver_t * vga = install_vga();
 
         driver_data_t ddata = {
-            .info = NULL,s
+            .info = NULL,
             .data = "Ahmed\t",
             .size = 6
         };
@@ -137,6 +138,8 @@ int _kmain(multiboot_info_t *multiboot,
         {
             vga->write(&ddata);
         }
+
+        strlen(ddata.data);
 
         //TODO min libc
         //TODO gdt
