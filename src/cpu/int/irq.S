@@ -1,5 +1,5 @@
 /*
- * Created: Saturday, October 8th 2022, 2:00:18 pm
+ * Created: Wednesday, October 12th 2022, 10:33:48 am
  * Author: Ahmed Ziabat Ziabat
  * 
  * 
@@ -33,31 +33,63 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+.set HW_OFFSET, 0x20
 
-#ifndef TK_PORT_H
-#define TK_PORT_H
+.section .text
 
-#include <types.h>
+.macro _irq_ num
+.global _irq_\num
+_irq_\num:
+    cli
+    pushl \num
+    pushl \num+HW_OFFSET
+    jmp _irq_common
+.endm
 
-#define PIC_MASTER          0x20
-#define PIC_MASTER_COMMAND  PIC_MASTER
-#define PIC_MASTER_DATA     PIC_MASTER+1
+_irq_common:
+    pushal
+    
+    pushl %ds
+    pushl %es
+    pushl %fs
+    pushl %gs
 
-#define PIC_SLAVE           0xA0
-#define PIC_SLAVE_COMMAND   PIC_SLAVE
-#define PIC_SLAVE_DATA      PIC_SLAVE+1
+    mov $0x10, %ax
+    mov %ax, %ds
+    mov %ax, %es
+    mov %ax, %fs
+    mov %ax, %gs
 
-#define PIC_ICW4            0x01
-#define PIC_INIT            0x10
+    cld
 
-typedef uint16 port_t;
+    push %esp
+    call irq_handler
+    addl $4, %esp
 
-extern void __out8(port_t port, uint8 value);
-extern void __out16(port_t port, uint16 value);
-extern void __out32(port_t port, uint32 value);
+    popl %gs
+    popl %fs
+    popl %es
+    popl %ds
 
-extern void __in8(port_t port, uint8 * value);
-extern void __in16(port_t port, uint16 * value);
-extern void __in32(port_t port, uint32 * value);
+    popal
 
-#endif
+    addl $8,(%esp)
+
+iret
+
+
+_irq_ 0x01
+_irq_ 0x02
+_irq_ 0x03
+_irq_ 0x04
+_irq_ 0x05
+_irq_ 0x06
+_irq_ 0x07
+_irq_ 0x08
+_irq_ 0x09
+_irq_ 0x0A
+_irq_ 0x0B
+_irq_ 0x0C
+_irq_ 0x0D
+_irq_ 0x0E
+_irq_ 0x0F

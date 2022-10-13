@@ -95,5 +95,8 @@ void idt_init()
 
 void isr_handler(reg_frame_t * regs)
 {
-
+    char * v = 0xb8000;
+    v[0] = 'B';
+    v[2] = 'C';
+    for(;;);
 }

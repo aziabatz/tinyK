@@ -1,5 +1,5 @@
 /*
- * Created: Saturday, October 8th 2022, 2:00:18 pm
+ * Created: Wednesday, October 12th 2022, 6:00:22 pm
  * Author: Ahmed Ziabat Ziabat
  * 
  * 
@@ -33,31 +33,23 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#ifndef TK_PIC_H
+#define TK_PIC_H
 
-#ifndef TK_PORT_H
-#define TK_PORT_H
+#include <stdbool.h>
+#include <dev/io/port.h>
 
-#include <types.h>
+#define PIC_OFFSET 0x20
+#define MAX_PIC_LINES 16
 
-#define PIC_MASTER          0x20
-#define PIC_MASTER_COMMAND  PIC_MASTER
-#define PIC_MASTER_DATA     PIC_MASTER+1
+void pic_set(bool enable);
 
-#define PIC_SLAVE           0xA0
-#define PIC_SLAVE_COMMAND   PIC_SLAVE
-#define PIC_SLAVE_DATA      PIC_SLAVE+1
+bool pic_is_enabled();
 
-#define PIC_ICW4            0x01
-#define PIC_INIT            0x10
+void pic_remap();
 
-typedef uint16 port_t;
+void pic_remap_offset(uint8 master, uint8 slave);
 
-extern void __out8(port_t port, uint8 value);
-extern void __out16(port_t port, uint16 value);
-extern void __out32(port_t port, uint32 value);
-
-extern void __in8(port_t port, uint8 * value);
-extern void __in16(port_t port, uint16 * value);
-extern void __in32(port_t port, uint32 * value);
+void pic_ack(bool ack_slave);
 
 #endif

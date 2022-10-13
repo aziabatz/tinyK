@@ -3,6 +3,8 @@
 static gdt_entry_t gdt_entries[MAX_GDT_ENTRIES];
 static gdt_t gdt;
 
+void __install_gdt(gdt_t *);
+
 void gdt_set_gate(uint32 entry, 
     uint32 limit,
     uint32 base,

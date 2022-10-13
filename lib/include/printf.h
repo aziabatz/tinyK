@@ -1,5 +1,5 @@
 /*
- * Created: Saturday, October 8th 2022, 2:00:18 pm
+ * Created: Thursday, October 13th 2022, 10:26:37 am
  * Author: Ahmed Ziabat Ziabat
  * 
  * 
@@ -33,31 +33,14 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#include <str.h>
 
-#ifndef TK_PORT_H
-#define TK_PORT_H
+#ifdef TK_KERNEL_SPACE
 
-#include <types.h>
+size_t kprintf(char * fmt, ...);
 
-#define PIC_MASTER          0x20
-#define PIC_MASTER_COMMAND  PIC_MASTER
-#define PIC_MASTER_DATA     PIC_MASTER+1
+void kprint(char * str);
 
-#define PIC_SLAVE           0xA0
-#define PIC_SLAVE_COMMAND   PIC_SLAVE
-#define PIC_SLAVE_DATA      PIC_SLAVE+1
-
-#define PIC_ICW4            0x01
-#define PIC_INIT            0x10
-
-typedef uint16 port_t;
-
-extern void __out8(port_t port, uint8 value);
-extern void __out16(port_t port, uint16 value);
-extern void __out32(port_t port, uint32 value);
-
-extern void __in8(port_t port, uint8 * value);
-extern void __in16(port_t port, uint16 * value);
-extern void __in32(port_t port, uint32 * value);
+else
 
 #endif
