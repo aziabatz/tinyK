@@ -41,8 +41,9 @@
 .global _irq_\num
 _irq_\num:
     cli
-    pushl \num
-    pushl \num+HW_OFFSET
+    xchgw %bx,%bx
+    pushl $\num
+    pushl $\num+HW_OFFSET
     jmp _irq_common
 .endm
 

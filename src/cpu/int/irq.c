@@ -2,6 +2,7 @@
 #include <cpu/int/idt.h>
 #include <cpu/int/pic.h>
 #include <stddef.h>
+#include <printf.h>
 
 extern void _irq_0x00();
 extern void _irq_0x01();
@@ -20,9 +21,9 @@ extern void _irq_0x0D();
 extern void _irq_0x0E();
 extern void _irq_0x0F();
 
-static __handler irq_handlers[16];
+static __handler irq_handlers[PIC_MAX_LINES];
 
-static void install_irq()
+void install_irq()
 {
     //clear irq lines handlers
     for(size_t i = 0; i < PIC_MAX_LINES; i++)
@@ -71,10 +72,11 @@ void set_irq_handler(uint32 line, __handler handler)
 void irq_handler(reg_frame_t * regs)
 {
     //check we have received IRQ and not another interrupt
-    kprint("irq");
+    kprintf("irq %d\n", regs->int_no);
+    asm("xchgw %bx,%bx");
     if(regs->int_no >= 32 && regs->int_no <=47)
     {
-        __handler handler = irq_handlers[regs->int_no];
+        __handler handler = irq_handlers[regs->int_no-PIC_OFFSET];
         if(handler)
         {
             handler(regs);

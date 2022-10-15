@@ -45,7 +45,7 @@
 typedef void (*__handler)(reg_frame_t *);
 
 void set_irq_handler(uint32 irqn, __handler handler);
-
+void install_irq();
 void irq_init();
 
 //FIXME should only be visible by asm file

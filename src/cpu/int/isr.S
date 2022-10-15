@@ -56,7 +56,6 @@ _inte_\num:
 
 _int_common:
     //push gp regs
-    xchg %bx, %bx
     pushal
 
     //push seg regs
@@ -70,7 +69,7 @@ _int_common:
     push %esp
     call isr_handler
 
-    xchgw %bx, %bx
+    //xchgw %bx, %bx
     add $4, %esp //clear push
     
 
