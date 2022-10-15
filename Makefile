@@ -24,7 +24,7 @@ define GRUB_ENTRY
 "set timeout=5\n\
 set default=0\n\
 \n\
-menuentry \"$(KERNEL_NAME)\"{\n\t\
+menuentry \"$(KERNEL_NAME)\" {\n\t\
 	multiboot /boot/$(TARGET)\n\t\
 	boot \n\
 }"
@@ -38,7 +38,13 @@ C_SOURCES := $(shell find $(SRCDIR) -name \*.c)
 C_OBJECTS	:= $(C_SOURCES:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 S_OBJECTS	:= $(ASM_SOURCES:$(SRCDIR)/%.S=$(OBJDIR)/%.s.o)
 
-all: mkobj $(TARGET)
+all: bin iso
+
+bin: mkobj $(TARGET)
+
+$(TARGET): $(C_OBJECTS) $(S_OBJECTS) $(LIBRARIES)
+	@$(LINKER) $(LDFLAGS) -T link.ld -o $(TARGET) $^
+	@echo [OK] Successfully linked. Binary generated!
 
 $(C_OBJECTS): $(OBJDIR)/$(notdir %.o) : $(SRCDIR)/%.c
 	@$(CC) $(CFLAGS) -c $< -o $@
@@ -59,11 +65,6 @@ iso: $(TARGET)
 mkobj:
 	@rsync -v -a -f"+ */" -f"- *" $(SRCDIR)/ $(OBJDIR)/
 	@echo [OK] Generated objects directory tree!
-
-
-$(TARGET): $(C_OBJECTS) $(S_OBJECTS) $(LIBRARIES)
-	@$(LINKER) $(LDFLAGS) -T link.ld -o $(TARGET) $^
-	@echo [OK] Successfully linked. Binary generated!
 
 $(LIBRARIES):
 	cd lib && $(MAKE)
