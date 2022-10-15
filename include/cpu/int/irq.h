@@ -42,13 +42,13 @@
 #include <stdbool.h>
 #include <cpu/regs.h>
 
-void set_irq_handler(uint8 irqn, uint32 handler);
+typedef void (*__handler)(reg_frame_t *);
+
+void set_irq_handler(uint32 irqn, __handler handler);
 
 void irq_init();
 
 //FIXME should only be visible by asm file
 void irq_handler(reg_frame_t * regs);
-
-typedef void (*__handler)(reg_frame_t *);
 
 #endif

@@ -34,15 +34,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TK_STDLIB_H
-#define TK_STDLIB_H
+#ifndef MINLIB_STDLIB_H
+#define MINLIB_STDLIB_H
+
+#include <stddef.h>
 
 int atoi(const char * str);
 
-#ifdef TK_KERNEL_SPACE
+#ifndef TK_USER_SPACE
 
 void * kmalloc(size_t size);
 void * kcalloc(size_t items, size_t size);
 void * krealloc(void * ptr, size_t size);
+
+#endif
 
 #endif

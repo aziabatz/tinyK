@@ -43,27 +43,45 @@
 #include <cpu/task/gdt.h>
 #include <cpu/int/idt.h>
 #include <cpu/int/irq.h>
+#include <dev/io/screen/tty.h>
+#include <printf.h>
+#include <debug.h>
+#include <dev/pit/timer.h>
+
+void test()
+{
+    kprintf("%s\n","testing kprintf:");
+    kprintf("Hello %s, a random number in hex: %x\n", "world", 0xA83ED);
+    kprintf("And now a char %c and a null str: %s\n", 'a', NULL);
+    kprintf("Let's try a formatting... %h and %%\n");
+    kprintf("Ohh, last test, some decimals(signed): %d, %d\n", 43232, -543);
+    kprintf("Also let's try the -543 of before unsigned: %u\n", -543);
+}
 
 int _kmain(multiboot_info_t *multiboot,
            uint32 magicnum,
            uint32 stack)
     {
         driver_t * vga = install_vga();
-
-        driver_data_t ddata = {
-            .info = NULL,
-            .data = "Ahmed\t",
-            .size = 6
-        };
-
-        for(int i = 0; i<3; i++)
-        {
-            vga->write(&ddata);
-        }
+        set_tty_dev(vga);
 
         gdt_init();
+        kinfo(INFO, "GDT Loaded");
         idt_init();
+        kinfo(INFO, "IDT Loaded");
         irq_init();
+        kinfo(INFO, "IRQ is set");
+        
+
+        test();
+
+        timer_init();
+
+        //int a = 3/0;
+        
+        //kprint("Hola");
+
+        
 
         //TODO min libc OK
         //TODO gdt OK
@@ -74,5 +92,5 @@ int _kmain(multiboot_info_t *multiboot,
         //TODO paging
         
 
-        for(;;);
+        
     } 

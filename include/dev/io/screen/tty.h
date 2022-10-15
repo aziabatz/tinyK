@@ -1,5 +1,5 @@
 /*
- * Created: Wednesday, October 12th 2022, 10:33:48 am
+ * Created: Thursday, October 13th 2022, 6:15:04 pm
  * Author: Ahmed Ziabat Ziabat
  * 
  * 
@@ -33,63 +33,14 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-.set HW_OFFSET, 0x20
 
-.section .text
+#ifndef TK_TTY_H
+#define TK_TTY_H
 
-.macro _irq_ num
-.global _irq_\num
-_irq_\num:
-    cli
-    pushl \num
-    pushl \num+HW_OFFSET
-    jmp _irq_common
-.endm
+#include <dev/driver.h>
 
-_irq_common:
-    pushal
-    
-    pushl %ds
-    pushl %es
-    pushl %fs
-    pushl %gs
+size_t kprint(char * str);
 
-    mov $0x10, %ax
-    mov %ax, %ds
-    mov %ax, %es
-    mov %ax, %fs
-    mov %ax, %gs
+void set_tty_dev(driver_t * device);
 
-    cld
-
-    push %esp
-    call irq_handler
-    addl $4, %esp
-
-    popl %gs
-    popl %fs
-    popl %es
-    popl %ds
-
-    popal
-
-    addl $8,(%esp)
-
-iret
-
-_irq_ 0x00
-_irq_ 0x01
-_irq_ 0x02
-_irq_ 0x03
-_irq_ 0x04
-_irq_ 0x05
-_irq_ 0x06
-_irq_ 0x07
-_irq_ 0x08
-_irq_ 0x09
-_irq_ 0x0A
-_irq_ 0x0B
-_irq_ 0x0C
-_irq_ 0x0D
-_irq_ 0x0E
-_irq_ 0x0F
+#endif

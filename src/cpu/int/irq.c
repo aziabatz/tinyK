@@ -3,6 +3,7 @@
 #include <cpu/int/pic.h>
 #include <stddef.h>
 
+extern void _irq_0x00();
 extern void _irq_0x01();
 extern void _irq_0x02();
 extern void _irq_0x03();
@@ -24,7 +25,7 @@ static __handler irq_handlers[16];
 static void install_irq()
 {
     //clear irq lines handlers
-    for(size_t i = 0; i < MAX_PIC_LINES; i++)
+    for(size_t i = 0; i < PIC_MAX_LINES; i++)
     {
         irq_handlers[i] = NULL;
     }
@@ -32,6 +33,8 @@ static void install_irq()
     uint16 selector = KERNEL_CS;
     uint8 flags = IDT_P | IDT_DPL(0) | IDT_GATE_INT32;
 
+
+    idt_set_gate(0x00 + PIC_OFFSET, (uint32) _irq_0x00, selector, flags);
     idt_set_gate(0x01 + PIC_OFFSET, (uint32) _irq_0x01, selector, flags);
     idt_set_gate(0x02 + PIC_OFFSET, (uint32) _irq_0x02, selector, flags);
     idt_set_gate(0x03 + PIC_OFFSET, (uint32) _irq_0x03, selector, flags);
@@ -48,16 +51,18 @@ static void install_irq()
     idt_set_gate(0x0E + PIC_OFFSET, (uint32) _irq_0x0E, selector, flags);
     idt_set_gate(0x0F + PIC_OFFSET, (uint32) _irq_0x0F, selector, flags);
 
-    pic_set(true);
+    
 }
 
 void irq_init()
 {
     pic_remap();
     install_irq();
+    pic_set(true);
+    asm("sti");
 }
 
-void set_irq_line(uint32 line, __handler handler)
+void set_irq_handler(uint32 line, __handler handler)
 {
     irq_handlers[line] = handler;
 }
@@ -66,6 +71,7 @@ void set_irq_line(uint32 line, __handler handler)
 void irq_handler(reg_frame_t * regs)
 {
     //check we have received IRQ and not another interrupt
+    kprint("irq");
     if(regs->int_no >= 32 && regs->int_no <=47)
     {
         __handler handler = irq_handlers[regs->int_no];

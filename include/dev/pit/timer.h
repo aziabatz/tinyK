@@ -1,5 +1,5 @@
 /*
- * Created: Wednesday, October 12th 2022, 10:33:48 am
+ * Created: Saturday, October 15th 2022, 5:20:14 pm
  * Author: Ahmed Ziabat Ziabat
  * 
  * 
@@ -33,63 +33,21 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-.set HW_OFFSET, 0x20
+#ifndef TK_TIMER_H
+#define TK_TIMER_H
 
-.section .text
+#include <types.h>
+#include <dev/pit/pit.h>
 
-.macro _irq_ num
-.global _irq_\num
-_irq_\num:
-    cli
-    pushl \num
-    pushl \num+HW_OFFSET
-    jmp _irq_common
-.endm
+#define SECONDS_PER_MINUTE  60
+#define MINUTES_PER_HOUR    60
 
-_irq_common:
-    pushal
-    
-    pushl %ds
-    pushl %es
-    pushl %fs
-    pushl %gs
+#define TICKS_PER_SECOND   100
+#define TICKS_PER_MINUTE    TICKS_PER_SECOND * SECONDS_PER_MINUTE
+#define TICKS_PER_HOUR      TICKS_PER_MINUTE * MINUTES_PER_HOUR
 
-    mov $0x10, %ax
-    mov %ax, %ds
-    mov %ax, %es
-    mov %ax, %fs
-    mov %ax, %gs
+void timer_init();
 
-    cld
+void fire(uint64 ticks);
 
-    push %esp
-    call irq_handler
-    addl $4, %esp
-
-    popl %gs
-    popl %fs
-    popl %es
-    popl %ds
-
-    popal
-
-    addl $8,(%esp)
-
-iret
-
-_irq_ 0x00
-_irq_ 0x01
-_irq_ 0x02
-_irq_ 0x03
-_irq_ 0x04
-_irq_ 0x05
-_irq_ 0x06
-_irq_ 0x07
-_irq_ 0x08
-_irq_ 0x09
-_irq_ 0x0A
-_irq_ 0x0B
-_irq_ 0x0C
-_irq_ 0x0D
-_irq_ 0x0E
-_irq_ 0x0F
+#endif

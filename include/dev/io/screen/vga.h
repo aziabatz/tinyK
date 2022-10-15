@@ -32,8 +32,8 @@
 driver_t * get_vga_driver();
 driver_t * install_vga();
 
-driver_read_t * vga_read(driver_data_t * data);
-driver_write_t * vga_write(driver_data_t * data);
+int32 vga_read(driver_data_t * data);
+int32 vga_write(driver_data_t * data);
 
 
 struct vga_spec {

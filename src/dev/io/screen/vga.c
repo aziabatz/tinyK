@@ -2,13 +2,24 @@
 #include <dev/io/port.h>
 #include <util.h>
 #include <stdbool.h>
+#include <dev/io/screen/text_color.h>
 
 //screen related
 
 static uint16 x = 0, y = 0;
-static uint8 color = 0x1f;
+static uint8 color = WHITE;
 
 static vga_spec_t vga_spec = {80,25,2,FRAMEBUFFER};
+
+void set_fg(uint8 fg)
+{
+    color = fg & 0xF;
+}
+
+void set_bg(uint8 bg)
+{
+    color = (bg << 4) | color;
+}
 
 static inline void clear_line(uint32 line)
 {
@@ -81,7 +92,7 @@ static inline bool is_new_line()
     return false;
 }
 
-static void putc(char c)
+void putc(char c)
 {
 #if SERIAL_DEBUG
     //write char to serial port
@@ -97,6 +108,7 @@ static void putc(char c)
             break;
         case '\r':
             //TODO carriage return
+            x = 0;
             break;
         case '\n':
             //TODO line break
@@ -156,12 +168,12 @@ driver_t * install_vga()
     return &vga_driver;
 }
 
-driver_read_t * vga_read(driver_data_t * data)
+int32 vga_read(driver_data_t * data)
 {
-    return NULL;
+    return 0;
 }
 
-driver_write_t * vga_write(driver_data_t * data)
+int32 vga_write(driver_data_t * data)
 {
 #if false
     if(data->info != vga_driver.info)

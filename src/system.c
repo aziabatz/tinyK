@@ -1,5 +1,5 @@
 /*
- * Created: Wednesday, October 12th 2022, 10:33:48 am
+ * Created: Friday, October 14th 2022, 4:39:38 pm
  * Author: Ahmed Ziabat Ziabat
  * 
  * 
@@ -33,63 +33,68 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-.set HW_OFFSET, 0x20
 
-.section .text
+#include <system.h>
+#include <dev/io/screen/tty.h>
+#include <dev/io/screen/text_color.h>
+#include <cpu/regs.h>
+#include <printf.h>
 
-.macro _irq_ num
-.global _irq_\num
-_irq_\num:
-    cli
-    pushl \num
-    pushl \num+HW_OFFSET
-    jmp _irq_common
-.endm
+char * const RESERVED = "Reserved Exception - SHOULDN'T HAPPEN";
 
-_irq_common:
-    pushal
+static  char * exceptions[256] = 
+{
+    "Divide by zero",
+    "Debug",
+    "Non-maskable?",
+    "Breakpoint",
+    "Overflow",
+    "Bound Range Exceeded",
+    "Invalid Opcode",
+    "No device",
+    "Double Fault",
+    "Coprocesor Overrun",
+    "Bad TSS",
+    "Segment not present",
+    "Stack-Segment Fault",
+    "General protection Fault",
+    "Page Fault",
+    RESERVED,
+    "FPU Error",
+    "Alignment Check",
+    "Machine Check",
+    "SIMD Float Exception",
+    "Virtualization Error",
+    "Control Protection Error",
+    RESERVED,
+    "Hypervisor Exception",
+    "VMM Communication Exception",
+    "Security Exception",
+    RESERVED,
+    "Triple Fault"
+};
+
+void set_bg(uint8 bg);
+
+void kpanic(char * err, char * file, int line, reg_frame_t * regs)
+{
+    set_bg(RED);
+    //set_fg(WHITE);
+    kprintf("STOP!!! KERNEL PANIC!!!\n");
+    kprintf("Cause: %s\nError Code: %x\n", exceptions[regs->int_no], regs->err_code);
+    kprintf("Caused by %s:%d\n\n", file, line);
+    kprintf("CPU FRAME - REGISTERS DUMP\n"PANIC_MSG,
+    regs->eax, regs->ebx, regs->ecx, 
+    regs->edx, regs->edi, regs->esi,
+    regs->esp, regs->ebp, regs->ss,
+    regs->eip, regs->cs,
+    regs->gs,regs->fs, regs->es, regs->ds,
+    regs->eflags);
+
+    //error code and intno
+    //TODO EFLAGS
+
+    asm("__panic:;hlt;jmp __panic");
+
     
-    pushl %ds
-    pushl %es
-    pushl %fs
-    pushl %gs
-
-    mov $0x10, %ax
-    mov %ax, %ds
-    mov %ax, %es
-    mov %ax, %fs
-    mov %ax, %gs
-
-    cld
-
-    push %esp
-    call irq_handler
-    addl $4, %esp
-
-    popl %gs
-    popl %fs
-    popl %es
-    popl %ds
-
-    popal
-
-    addl $8,(%esp)
-
-iret
-
-_irq_ 0x00
-_irq_ 0x01
-_irq_ 0x02
-_irq_ 0x03
-_irq_ 0x04
-_irq_ 0x05
-_irq_ 0x06
-_irq_ 0x07
-_irq_ 0x08
-_irq_ 0x09
-_irq_ 0x0A
-_irq_ 0x0B
-_irq_ 0x0C
-_irq_ 0x0D
-_irq_ 0x0E
-_irq_ 0x0F
+}

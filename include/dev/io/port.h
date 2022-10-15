@@ -39,17 +39,6 @@
 
 #include <types.h>
 
-#define PIC_MASTER          0x20
-#define PIC_MASTER_COMMAND  PIC_MASTER
-#define PIC_MASTER_DATA     PIC_MASTER+1
-
-#define PIC_SLAVE           0xA0
-#define PIC_SLAVE_COMMAND   PIC_SLAVE
-#define PIC_SLAVE_DATA      PIC_SLAVE+1
-
-#define PIC_ICW4            0x01
-#define PIC_INIT            0x10
-
 typedef uint16 port_t;
 
 extern void __out8(port_t port, uint8 value);

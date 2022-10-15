@@ -5,6 +5,9 @@ static bool pic_enabled = false;
 void pic_set(bool enable)
 {
     pic_enabled = enable;
+    if(enable)
+    {
+    }
     //TODO mask all interrupts
 }
 
@@ -19,7 +22,7 @@ void pic_remap()
     __out8(PIC_MASTER, (PIC_INIT | PIC_ICW4));
     __out8(PIC_SLAVE, (PIC_INIT | PIC_ICW4));
     __out8(PIC_MASTER_DATA, PIC_MASTER);
-    __out8(PIC_SLAVE_DATA, PIC_SLAVE);
+    __out8(PIC_SLAVE_DATA, PIC_MASTER+PIC_MASTER_LINES);
     __out8(PIC_MASTER_DATA,0b100);
     __out8(PIC_SLAVE_DATA, 0b10);
     __out8(PIC_MASTER_DATA, PIC_ICW4);

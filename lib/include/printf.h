@@ -33,14 +33,15 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include <str.h>
+#ifndef MINLIB_PRINTF_H
+#define MINLIB_PRINTF_H
 
-#ifdef TK_KERNEL_SPACE
+#include <str.h>
+#include <stdarg.h>
+
+#ifndef TK_USER_SPACE
 
 size_t kprintf(char * fmt, ...);
 
-void kprint(char * str);
-
-else
-
+#endif
 #endif

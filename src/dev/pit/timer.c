@@ -1,5 +1,5 @@
 /*
- * Created: Wednesday, October 12th 2022, 10:33:48 am
+ * Created: Saturday, October 15th 2022, 5:21:29 pm
  * Author: Ahmed Ziabat Ziabat
  * 
  * 
@@ -33,63 +33,21 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-.set HW_OFFSET, 0x20
+#include <dev/pit/timer.h>
+#include <cpu/int/irq.h>
+#include <printf.h>
 
-.section .text
+volatile uint64 ticks;
 
-.macro _irq_ num
-.global _irq_\num
-_irq_\num:
-    cli
-    pushl \num
-    pushl \num+HW_OFFSET
-    jmp _irq_common
-.endm
-
-_irq_common:
-    pushal
+void fire_tick(reg_frame_t * regs)
+{
     
-    pushl %ds
-    pushl %es
-    pushl %fs
-    pushl %gs
+    kprintf("Timer: %d\n", ticks);
+    ticks++;
+}
 
-    mov $0x10, %ax
-    mov %ax, %ds
-    mov %ax, %es
-    mov %ax, %fs
-    mov %ax, %gs
-
-    cld
-
-    push %esp
-    call irq_handler
-    addl $4, %esp
-
-    popl %gs
-    popl %fs
-    popl %es
-    popl %ds
-
-    popal
-
-    addl $8,(%esp)
-
-iret
-
-_irq_ 0x00
-_irq_ 0x01
-_irq_ 0x02
-_irq_ 0x03
-_irq_ 0x04
-_irq_ 0x05
-_irq_ 0x06
-_irq_ 0x07
-_irq_ 0x08
-_irq_ 0x09
-_irq_ 0x0A
-_irq_ 0x0B
-_irq_ 0x0C
-_irq_ 0x0D
-_irq_ 0x0E
-_irq_ 0x0F
+void timer_init()
+{
+    ticks = 0;
+    set_irq_handler(PIT_IRQ, fire_tick);
+}

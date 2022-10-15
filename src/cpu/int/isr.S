@@ -56,24 +56,28 @@ _inte_\num:
 
 _int_common:
     //push gp regs
+    xchg %bx, %bx
     pushal
 
     //push seg regs
-    push %ds
-    push %es
-    push %fs
-    push %gs
+    pushl %ds
+    pushl %es
+    pushl %fs
+    pushl %gs
 
     cld
 
     push %esp
     call isr_handler
-    add $4, %esp //clear push
 
-    pop %gs
-    pop %fs
-    pop %es
-    pop %ds
+    xchgw %bx, %bx
+    add $4, %esp //clear push
+    
+
+    popl %gs
+    popl %fs
+    popl %es
+    popl %ds
 
     popal
 

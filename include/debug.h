@@ -38,7 +38,7 @@
 
 #define INFO    0
 #define WARNING 1
-#define PANIC   2
+#define ERROR   2
 
 void kinfo(int level, char * str);
 

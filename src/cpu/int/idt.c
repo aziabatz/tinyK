@@ -1,4 +1,6 @@
 #include <cpu/int/idt.h>
+#include <system.h>
+#include <stddef.h>
 
 static idt_gate_t idt_gates[MAX_IDT_ENTRIES];
 static idt_t idt;
@@ -95,8 +97,5 @@ void idt_init()
 
 void isr_handler(reg_frame_t * regs)
 {
-    char * v = 0xb8000;
-    v[0] = 'B';
-    v[2] = 'C';
-    for(;;);
+    kpanic(NULL, __FILE__, __LINE__, regs);
 }

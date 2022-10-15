@@ -38,7 +38,7 @@
 .global __flush_gdt
 
 __install_gdt:
-    xchgw %bx,%bx
+   //  xchgw %bx,%bx
     mov 4(%esp), %eax
     lgdt (%eax)
 

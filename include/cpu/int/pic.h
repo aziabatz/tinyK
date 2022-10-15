@@ -39,8 +39,22 @@
 #include <stdbool.h>
 #include <dev/io/port.h>
 
-#define PIC_OFFSET 0x20
-#define MAX_PIC_LINES 16
+#define PIC_MASTER          0x20
+#define PIC_MASTER_COMMAND  PIC_MASTER
+#define PIC_MASTER_DATA     PIC_MASTER+1
+
+#define PIC_SLAVE           0xA0
+#define PIC_SLAVE_COMMAND   PIC_SLAVE
+#define PIC_SLAVE_DATA      PIC_SLAVE+1
+
+#define PIC_ICW4            0x01
+#define PIC_INIT            0x10
+
+#define PIC_MASTER_LINES    8
+#define PIC_SLAVE_LINES     8
+#define PIC_MAX_LINES       PIC_MASTER_LINES + PIC_SLAVE_LINES
+
+#define PIC_OFFSET          PIC_MASTER
 
 void pic_set(bool enable);
 

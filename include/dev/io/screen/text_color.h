@@ -1,5 +1,5 @@
 /*
- * Created: Wednesday, October 12th 2022, 10:33:48 am
+ * Created: Thursday, October 13th 2022, 7:29:55 pm
  * Author: Ahmed Ziabat Ziabat
  * 
  * 
@@ -33,63 +33,29 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-.set HW_OFFSET, 0x20
 
-.section .text
+#ifndef TK_TEXT_COLOR_H
+#define TK_TEXT_COLOR_H
 
-.macro _irq_ num
-.global _irq_\num
-_irq_\num:
-    cli
-    pushl \num
-    pushl \num+HW_OFFSET
-    jmp _irq_common
-.endm
+#define LIGHT(colour) (0x80 | colour)
 
-_irq_common:
-    pushal
-    
-    pushl %ds
-    pushl %es
-    pushl %fs
-    pushl %gs
+#define BLACK           0
+#define BLUE            1
+#define GREEN           2
+#define CYAN            3
+#define RED             4
+#define MAGENTA         5
+#define BROWN           6
+#define LIGHT_GREY      7
 
-    mov $0x10, %ax
-    mov %ax, %ds
-    mov %ax, %es
-    mov %ax, %fs
-    mov %ax, %gs
+#define DARK_GREY       LIGHT(BLACK)         
+#define LIGHT_BLUE      LIGHT(BLUE)          
+#define LIGHT_GREEN     LIGHT(GREEN)         
+#define LIGHT_CYAN      LIGHT(CYAN)          
+#define LIGH_RED        LIGHT(RED)           
+#define LIGHT_MAGENTA   LIGHT(MAGENTA)               
+#define YELLOW          LIGHT(BROWN)     
+#define WHITE           0xF
 
-    cld
 
-    push %esp
-    call irq_handler
-    addl $4, %esp
-
-    popl %gs
-    popl %fs
-    popl %es
-    popl %ds
-
-    popal
-
-    addl $8,(%esp)
-
-iret
-
-_irq_ 0x00
-_irq_ 0x01
-_irq_ 0x02
-_irq_ 0x03
-_irq_ 0x04
-_irq_ 0x05
-_irq_ 0x06
-_irq_ 0x07
-_irq_ 0x08
-_irq_ 0x09
-_irq_ 0x0A
-_irq_ 0x0B
-_irq_ 0x0C
-_irq_ 0x0D
-_irq_ 0x0E
-_irq_ 0x0F
+#endif
