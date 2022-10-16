@@ -1,11 +1,11 @@
-/*
- * Created: Tuesday, October 11th 2022, 11:34:22 pm
- * Author: Ahmed Ziabat Ziabat
+/*!
+ * \date Tuesday, October 11th 2022, 11:34:22 pm
+ * \author Ahmed Ziabat Ziabat
  * 
  * 
  * BSD 3-Clause License
  * 
- * Copyright (c) 2022, Ahmed Ziabat Ziabat <aziabatz@alumnos.unex.es>
+ * \copyright Copyright (c) 2022, Ahmed Ziabat Ziabat <aziabatz@alumnos.unex.es>
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -32,15 +32,23 @@
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * 
+
+ * \brief
  */
+
+
 .section .text
 .global __install_gdt
 .global __flush_gdt
 
 __install_gdt:
-   //  xchgw %bx,%bx
     mov 4(%esp), %eax
     lgdt (%eax)
+
+    ljmp $0x08,$long_jump
+
+long_jump:
 
     movl %cr0, %eax
     orl $1, %eax
@@ -56,7 +64,5 @@ __install_gdt:
     movw %ax, %gs
     movw %ax, %ss
 
-    ljmp $0x08,$long_jump
 
-    long_jump:
 ret

@@ -1,4 +1,4 @@
-KERNEL_NAME = unexOS
+KERNEL_NAME = tinykernel
 TARGET = $(KERNEL_NAME).bin
 
 ARCH = i686-elf

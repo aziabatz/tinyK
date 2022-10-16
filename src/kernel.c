@@ -48,6 +48,8 @@
 #include <debug.h>
 #include <dev/pit/timer.h>
 
+extern void __hold_on();
+
 void test()
 {
     kprintf("%s\n","testing kprintf:");
@@ -67,20 +69,15 @@ int _kmain(multiboot_info_t *multiboot,
 
         gdt_init();
         kinfo(INFO, "GDT Loaded");
-        idt_init();
-        kinfo(INFO, "IDT Loaded");
+        
         irq_init();
         kinfo(INFO, "IRQ is set");
-        
 
-        test();
+        idt_init();
+        kinfo(INFO, "IDT Loaded");
 
         timer_init();
-
-        //int a = 3/0;
         
-        //kprint("Hola");
-
         
 
         //TODO min libc OK
@@ -90,7 +87,7 @@ int _kmain(multiboot_info_t *multiboot,
         //TODO irq
         //TODO keyboard and timer
         //TODO paging
-        
+        __hold_on();
 
         
     } 

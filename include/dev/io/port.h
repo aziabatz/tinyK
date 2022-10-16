@@ -39,14 +39,37 @@
 
 #include <types.h>
 
+/// @brief Tipo puerto E/S
 typedef uint16 port_t;
 
+/// @brief Función Puerto E/S salida de tamaño byte
+/// @param port Puerto al que va dirigido el dato
+/// @param value Valor del dato
 extern void __out8(port_t port, uint8 value);
+
+/// @brief Función Puerto E/S salida de tamaño 2 bytes
+/// @param port Puerto al que va dirigido el dato
+/// @param value Valor del dato
 extern void __out16(port_t port, uint16 value);
+
+/// @brief Función Puerto E/S salida de tamaño 4 bytes
+/// @param port Puerto al que va dirigido el dato
+/// @param value Valor del dato
 extern void __out32(port_t port, uint32 value);
 
+/// @brief Función Puerto E/S entrada de tamaño byte
+/// @param port Puerto del que se lee el dato
+/// @param value Puntero donde se almacena el dato leído
 extern void __in8(port_t port, uint8 * value);
+
+/// @brief Función Puerto E/S entrada de tamaño 2 bytes
+/// @param port Puerto del que se lee el dato
+/// @param value Puntero donde se almacena el dato leído
 extern void __in16(port_t port, uint16 * value);
+
+/// @brief Función Puerto E/S entrada de tamaño 4 bytes
+/// @param port Puerto del que se lee el dato
+/// @param value Puntero donde se almacena el dato leído
 extern void __in32(port_t port, uint32 * value);
 
 #endif

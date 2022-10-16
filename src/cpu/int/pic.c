@@ -34,8 +34,8 @@ void pic_remap()
     asm("mov $0x80, %al; out %al, $0");
 
     //discard masks
-    __out8(PIC_MASTER_DATA, 0x0);
-    __out8(PIC_SLAVE_DATA,0x0);
+    __out8(PIC_MASTER_DATA, 0xFC);
+    __out8(PIC_SLAVE_DATA,0xFF);
     //asm("sti");
 }
 

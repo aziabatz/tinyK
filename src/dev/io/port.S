@@ -8,7 +8,6 @@
 .global __in32
 
 
-//XXX Working?
 //FIXME IMPORTANT!!! check stack offset
 
 __out8:

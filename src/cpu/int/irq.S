@@ -41,7 +41,6 @@
 .global _irq_\num
 _irq_\num:
     cli
-    xchgw %bx,%bx
     pushl $\num
     pushl $\num+HW_OFFSET
     jmp _irq_common
@@ -65,6 +64,7 @@ _irq_common:
 
     push %esp
     call irq_handler
+
     addl $4, %esp
 
     popl %gs
@@ -74,7 +74,7 @@ _irq_common:
 
     popal
 
-    addl $8,(%esp)
+    addl $8,%esp
 
 iret
 

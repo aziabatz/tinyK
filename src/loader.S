@@ -30,6 +30,7 @@ mboot:
 .long start 
 
 start:
+    cli
     mov $kernel_stack, %esp
     push $STACK_SIZE
     push %eax
@@ -37,6 +38,11 @@ start:
     xor %ebp, %ebp
     call _kmain
 
+.global __hold_on
+__hold_on:
+    hlt
+    nop
+    jmp __hold_on
 
 _stop:
     cli
