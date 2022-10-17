@@ -1,5 +1,5 @@
 /**
- * \date Monday, October 17th 2022, 4:35:20 pm
+ * \date Monday, October 17th 2022, 4:44:03 pm
  * \author Ahmed Ziabat Ziabat
  * 
  * 
@@ -37,29 +37,31 @@
  * \brief
  */
 
+#ifndef TK_PAGING_UTIL_H
+#define TK_PAGING_UTIL_H
 
-.section .text
-.global __set_pg
-.global __clear_pg
-.global __load_pd
+#include <types.h>
 
-__set_pg:
-    push %eax
-    movl %cr0, %eax
-    orl $0x80000001, %eax
-    movl %eax, %cr0
-    pop %eax
-ret
+/**
+ * @brief Sets the paging flag in the CR0 register
+ * 
+ */
+void __set_pg(void);
 
-__clear_pg:
-    push %eax
-    movl %cr0, %eax
-    andl $0x7FFFFFFF, %eax
-    movl %eax, %cr0
-    pop %eax
-ret
+/**
+ * @brief Clears the paging flag in the CR0 register
+ * 
+ */
+void __clear_pg(void);
 
-__load_pd:
-    mov 4(%esp), %eax
-    mov %eax, %cr3
-ret
+/**
+ * @brief Loads the address of the page directory to the CR3 register
+ * 
+ * @param pd Page directory address
+ */
+void __load_pd(uint32 pd);
+
+uint32 __pf_addr();
+
+
+#endif

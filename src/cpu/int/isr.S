@@ -37,6 +37,8 @@
 
 .section .text
 
+.global reserved
+
 .macro _int_ num
 .global _int_\num
 _int_\num:
@@ -81,6 +83,7 @@ _int_common:
 
     //clear push from macro
     add $8, %esp
+reserved:
 iret
 
 _int_ 0x00

@@ -57,5 +57,8 @@
 #define YELLOW          LIGHT(BROWN)     
 #define WHITE           0xF
 
+void set_bg(uint8 bg);
+void set_fg(uint8 fg);
+
 
 #endif

@@ -72,6 +72,8 @@ void idt_init();
 
 void idt_set_gate(uint32 entry, uint32 offset, uint16 selector, uint8 flags);
 
+void idt_set_handler(uint32 entry, uint32 handler);
+
 void isr_handler(reg_frame_t * regs);
 
 #endif

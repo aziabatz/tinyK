@@ -1,5 +1,5 @@
 /**
- * \date Monday, October 17th 2022, 4:44:03 pm
+ * \date Monday, October 17th 2022, 5:42:46 pm
  * \author Ahmed Ziabat Ziabat
  * 
  * 
@@ -41,24 +41,51 @@
 #define TK_PAGING_H
 
 #include <types.h>
+#include <cpu/int/idt.h>
 
-/**
- * @brief Sets the paging flag in the CR0 register
- * 
- */
-void __set_pg(void);
+typedef uint32 phys_t;
+typedef uint32 virt_t;
 
-/**
- * @brief Clears the paging flag in the CR0 register
- * 
- */
-void __clear_pg(void);
+#define PG_MAX_PTE                  1024
+#define PG_MAX_PDE                  1024
+#define PG_PAGE_SIZE                4096 // 4KiB pages
 
-/**
- * @brief Loads the address of the page directory to the CR3 register
- * 
- * @param pd Page directory address
- */
-void __load_pd(uint32 pd);
+#define PG_MAX_VMEM                 PG_MAX_PDE * PG_MAX_PTE * PG_PAGE_SIZE //4GiB addressed through paging
+
+#define PG_PAGE_FAULT_CODE          0x0E
+
+#define PG_ENTRY_FLAGS              0xFFF
+
+#define PVIRT_DIR_SHIFT             0x16
+#define PVIRT_TAB_SHIFT             0x0C
+
+#define PG_PTE_PRESENT              (1 << 0)
+#define PG_PTE_READ_WRITE           (1 << 1)
+#define PG_PTE_USER_KERNEL          (1 << 2)
+#define PG_PTE_WRITE_THROUGH        (1 << 3)
+#define PG_PTE_CACHE_DISABLE        (1 << 4)
+#define PG_PTE_ACCESSED             (1 << 5)
+#define PG_PTE_DIRTY                (1 << 6)
+#define PG_PTE_PAT                  (1 << 7)
+#define PG_PTE_GLOBAL               (1 << 8)
+#define PG_PTE_AVAILABLE            (0b111 << 9)
+#define PG_PTE_FRAME                ~(PG_ENTRY_FLAGS)
+
+#define PG_PDE_PRESENT              PG_PTE_PRESENT
+#define PG_PDE_READ_WRITE           PG_PTE_READ_WRITE
+#define PG_PDE_USER_KERNEL          PG_PTE_USER_KERNEL
+#define PG_PDE_WRITE_THROUGH        PG_PTE_WRITE_THROUGH
+#define PG_PDE_CACHE_DISABLE        PG_PTE_CACHE_DISABLE
+#define PG_PDE_ACCESSED             PG_PTE_ACCESSED
+#define PG_PDE_AVAILABLE            (0b111101 << 6)
+#define PG_PDE_SIZE                 (0 << 7) // For now only 4KB pages
+#define PG_PDE_FRAME                PG_PTE_FRAME
+
+#define PG_ALIGNED_4K(address)      (0 == (address & PAGING_ENTRY_FLAGS))
+
+#define PG_FAULT_MESSAGE            "US RW  P - Cause?\n" \
+                                    "%d  %d  %d   %s\n"
+
+void pg_set_handler(void);
 
 #endif

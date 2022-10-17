@@ -47,6 +47,7 @@
 #include <printf.h>
 #include <debug.h>
 #include <dev/pit/timer.h>
+#include <mem/paging.h>
 
 extern void __hold_on();
 extern void __boot_idpag();
@@ -79,8 +80,8 @@ int _kmain(multiboot_info_t *multiboot,
 
         timer_init();
         //__boot_idpag();
-        
-        
+
+        pg_set_handler();
 
         //TODO min libc OK
         //TODO gdt OK
