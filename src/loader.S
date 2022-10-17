@@ -13,9 +13,9 @@
 
 //Kernel start code
 .section .text
-.extern kmain, code, bss, end
-.global start
-.global _stop
+.extern _kmain, code, bss, end
+.global __start
+.global __stop
 
 .align 4
 
@@ -27,16 +27,53 @@ mboot:
 .long code
 .long bss
 .long end
-.long start 
+.long __start 
 
-start:
+__start:
     cli
-    mov $kernel_stack, %esp
+    mov $_kernel_stack, %esp
     push $STACK_SIZE
     push %eax
     push %ebx
+    call __boot_idpag
     xor %ebp, %ebp
     call _kmain
+
+.global __boot_idpag
+__boot_idpag:
+    xchg %bx,%bx
+    mov $0, %eax // start vaddr
+    mov $_boot_pt, %ebx //page table start
+    mov $_end, %ecx //last addr
+
+    idpag:
+        andl $0xFFFFF000, %eax // discard bits for alignment
+        orl $0x3, %eax //Add present and rw flags
+
+
+        movl %eax, (%ebx)
+        
+
+        addl $0x4, %ebx //next pte
+        addl $0x1000, %eax //next 4096 address
+        subl $0x1000, %ecx //have we paged until/after end
+
+        cmpl $0, %ecx
+        jg idpag
+
+    //we have set the pt entries
+    //now we must set the pd entry pointing to pt
+    movl $_boot_pt, %eax
+    orl $0x3, %eax 
+    movl $_boot_pd, %ebx
+    movl %eax, (%ebx)
+
+    pushl %ebx //push _boot_pd
+    call __load_pd
+    pop %ebx
+
+    call __set_pg //set paging flag
+ret
 
 .global __hold_on
 __hold_on:
@@ -44,13 +81,28 @@ __hold_on:
     nop
     jmp __hold_on
 
-_stop:
+__stop:
     cli
     hlt
-    jmp _stop
+    jmp __stop
 
 
 .section .bss
+_kernel_stack_bottom:
 .space STACK_SIZE
-kernel_stack:
+_kernel_stack:
 
+
+.section .data
+.align 4096 //Align 4K for paging
+
+/*
+                    ...
+    ...            _boot_pt[2]
+    _boot_pd[1]    _boot_pt[1]
+    _boot_pd[0] -> _boot_pt[0]
+*/
+_boot_pd:
+.space 4*1024, 0x0//1024 entries of 4 bytes each.
+_boot_pt:
+.space 4*1024, 0x0//Fill them with Supervisor|RW|Not Present flags

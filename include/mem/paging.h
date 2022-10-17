@@ -1,11 +1,11 @@
-/*
- * Created: Monday, October 10th 2022, 1:05:09 pm
- * Author: Ahmed Ziabat Ziabat
+/**
+ * \date Monday, October 17th 2022, 4:44:03 pm
+ * \author Ahmed Ziabat Ziabat
  * 
  * 
  * BSD 3-Clause License
  * 
- * Copyright (c) 2022, Ahmed Ziabat Ziabat <aziabatz@alumnos.unex.es>
+ * \copyright Copyright (c) 2022, Ahmed Ziabat Ziabat <aziabatz@alumnos.unex.es>
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -32,64 +32,33 @@
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * 
+
+ * \brief
  */
+
+#ifndef TK_PAGING_H
+#define TK_PAGING_H
+
 #include <types.h>
-#include <boot/multiboot.h>
 
+/**
+ * @brief Sets the paging flag in the CR0 register
+ * 
+ */
+void __set_pg(void);
 
+/**
+ * @brief Clears the paging flag in the CR0 register
+ * 
+ */
+void __clear_pg(void);
 
-#include <dev/io/screen/vga.h>
-#include <str.h>
-#include <cpu/task/gdt.h>
-#include <cpu/int/idt.h>
-#include <cpu/int/irq.h>
-#include <dev/io/screen/tty.h>
-#include <printf.h>
-#include <debug.h>
-#include <dev/pit/timer.h>
+/**
+ * @brief Loads the address of the page directory to the CR3 register
+ * 
+ * @param pd Page directory address
+ */
+void __load_pd(uint32 pd);
 
-extern void __hold_on();
-extern void __boot_idpag();
-
-void test()
-{
-    kprintf("%s\n","testing kprintf:");
-    kprintf("Hello %s, a random number in hex: %x\n", "world", 0xA83ED);
-    kprintf("And now a char %c and a null str: %s\n", 'a', NULL);
-    kprintf("Let's try a formatting... %h and %%\n");
-    kprintf("Ohh, last test, some decimals(signed): %d, %d\n", 43232, -543);
-    kprintf("Also let's try the -543 of before unsigned: %u\n", -543);
-}
-
-int _kmain(multiboot_info_t *multiboot,
-           uint32 magicnum,
-           uint32 stack)
-    {
-        driver_t * vga = install_vga();
-        set_tty_dev(vga);
-
-        gdt_init();
-        kinfo(INFO, "GDT Loaded");
-        
-        irq_init();
-        kinfo(INFO, "IRQ is set");
-
-        idt_init();
-        kinfo(INFO, "IDT Loaded");
-
-        timer_init();
-        //__boot_idpag();
-        
-        
-
-        //TODO min libc OK
-        //TODO gdt OK
-        //TODO idt OK
-        //TODO isr
-        //TODO irq
-        //TODO keyboard and timer
-        //TODO paging
-        __hold_on();
-
-        
-    } 
+#endif
