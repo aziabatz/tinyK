@@ -15,7 +15,7 @@ struct tm
 	unsigned char tm_wday;
 	unsigned char tm_yday;
 	unsigned char tm_isdst;//horario de verano
-}
+};
 
 #define TICKS_PER_SECOND 18000//comprobar despues con reloj pic
 
