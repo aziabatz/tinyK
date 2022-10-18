@@ -1,10 +1,13 @@
 #include <cpu/int/idt.h>
 #include <system.h>
 #include <stddef.h>
+#include <cpu/int/handler.h>
 
 static idt_gate_t idt_gates[MAX_IDT_ENTRIES];
+static __handler exception_handlers[0x20];
 static idt_t idt;
 
+extern void reserved();
 extern void _int_0x00();
 extern void _int_0x01();
 extern void _int_0x02();
@@ -66,19 +69,19 @@ void install_gates(uint16 selector, uint8 flags)
     idt_set_gate(0x0C,(uint32)_inte_0x0C, selector, flags);
     idt_set_gate(0x0D,(uint32)_inte_0x0D, selector, flags);
     idt_set_gate(0x0E,(uint32)_inte_0x0E, selector, flags);
-    idt_set_gate(0x0F,(uint32)_int_0x0F, selector, flags);
+    idt_set_gate(0x0F,(uint32)reserved, selector, flags);
     idt_set_gate(0x10,(uint32)_int_0x10, selector, flags);
     idt_set_gate(0x11,(uint32)_inte_0x11, selector, flags);
     idt_set_gate(0x12,(uint32)_int_0x12, selector, flags);
     idt_set_gate(0x13,(uint32)_int_0x13, selector, flags);
     idt_set_gate(0x14,(uint32)_int_0x14, selector, flags);
     idt_set_gate(0x15,(uint32)_int_0x15, selector, flags);
-    idt_set_gate(0x16,(uint32)_int_0x16, selector, flags);
-    idt_set_gate(0x17,(uint32)_int_0x17, selector, flags);
-    idt_set_gate(0x18,(uint32)_int_0x18, selector, flags);
-    idt_set_gate(0x19,(uint32)_int_0x19, selector, flags);
-    idt_set_gate(0x1A,(uint32)_int_0x1A, selector, flags);
-    idt_set_gate(0x1B,(uint32)_int_0x1B, selector, flags);
+    idt_set_gate(0x16,(uint32)reserved, selector, flags);
+    idt_set_gate(0x17,(uint32)reserved, selector, flags);
+    idt_set_gate(0x18,(uint32)reserved, selector, flags);
+    idt_set_gate(0x19,(uint32)reserved, selector, flags);
+    idt_set_gate(0x1A,(uint32)reserved, selector, flags);
+    idt_set_gate(0x1B,(uint32)reserved, selector, flags);
     idt_set_gate(0x1C,(uint32)_int_0x1C, selector, flags);
     idt_set_gate(0x1D,(uint32)_int_0x1D, selector, flags);
     idt_set_gate(0x1E,(uint32)_inte_0x1E, selector, flags);
@@ -87,6 +90,11 @@ void install_gates(uint16 selector, uint8 flags)
 
 void idt_init()
 {
+    for(size_t h = 0; h < 0x20; h++)
+    {
+        exception_handlers[h] = NULL;
+    }
+
     install_gates(KERNEL_CS, (IDT_P|IDT_DPL(0)|IDT_GATE_INT32));
 
     idt.base = (uint32) &idt_gates;
@@ -95,7 +103,22 @@ void idt_init()
     __asm__ __volatile__("lidtl (%0)"::"r"(&idt));
 }
 
+void idt_set_handler(uint32 entry, uint32 handler)
+{
+    exception_handlers[entry] = handler;
+}
+
 void isr_handler(reg_frame_t * regs)
 {
-    kpanic(NULL, __FILE__, __LINE__, regs);
+    __handler handler;
+
+    if(handler = exception_handlers[regs->int_no])
+    {
+        handler(regs);
+    }
+    else
+    {
+        kpanic(NULL, __FILE__, __LINE__, regs);
+    }
+    
 }

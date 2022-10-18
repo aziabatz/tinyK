@@ -47,8 +47,10 @@
 #include <printf.h>
 #include <debug.h>
 #include <dev/pit/timer.h>
+#include <mem/paging.h>
 
 extern void __hold_on();
+extern void __boot_idpag();
 
 void test()
 {
@@ -60,34 +62,37 @@ void test()
     kprintf("Also let's try the -543 of before unsigned: %u\n", -543);
 }
 
-int _kmain(multiboot_info_t *multiboot,
+int _kmain(multiboot_info_t * multiboot,
            uint32 magicnum,
            uint32 stack)
+{
+    driver_t * vga = install_vga();
+    set_tty_dev(vga);
+
+    kinfo(INFO, "Bootstrap OK!");
+
+    //memory detection
+    if(multiboot->mem_upper < (10*1024))
     {
-        driver_t * vga = install_vga();
-        set_tty_dev(vga);
+        kinfo(WARNING, "Total system RAM is below 10Mib!");
+    }
+    kprintf("\t\tRecognized memory: low=%d(KB)    high=%d(KB)\n", multiboot->mem_lower, multiboot->mem_upper);
 
-        gdt_init();
-        kinfo(INFO, "GDT Loaded");
-        
-        irq_init();
-        kinfo(INFO, "IRQ is set");
+    //init system
+    gdt_init();
+    kinfo(INFO, "GDT Loaded");
+    
+    irq_init();
+    kinfo(INFO, "IRQ is set");
 
-        idt_init();
-        kinfo(INFO, "IDT Loaded");
+    idt_init();
+    kinfo(INFO, "IDT Loaded");
 
-        timer_init();
-        
-        
+    timer_init();
 
-        //TODO min libc OK
-        //TODO gdt OK
-        //TODO idt OK
-        //TODO isr
-        //TODO irq
-        //TODO keyboard and timer
-        //TODO paging
-        __hold_on();
+    pg_set_handler();
 
-        
-    } 
+    __hold_on();
+
+    
+} 

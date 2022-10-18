@@ -1,11 +1,11 @@
-/*
- * Created: Saturday, October 8th 2022, 1:44:29 pm
- * Author: Ahmed Ziabat Ziabat
+/**
+ * \date Monday, October 17th 2022, 6:42:24 pm
+ * \author Ahmed Ziabat Ziabat
  * 
  * 
  * BSD 3-Clause License
  * 
- * Copyright (c) 2022, Ahmed Ziabat Ziabat <aziabatz@alumnos.unex.es>
+ * \copyright Copyright (c) 2022, Ahmed Ziabat Ziabat <aziabatz@alumnos.unex.es>
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -32,22 +32,51 @@
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * 
+
+ * \brief
  */
-#ifndef TK_SYSTEM_H
-#define TK_SYSTEM_H
 
-#include <cpu/regs.h>
+#include <mem/paging.h>
+#include <mem/util.h>
+#include <printf.h>
+#include <system.h>
+#include <dev/io/screen/text_color.h>
 
-#define PANIC_MSG "%%EAX: %x  %%EBX: %x  %%ECX: %x\n%%EDX: %x  %%ESI: %x  %%EDI: %x\n"\
-"%%ESP: %x  %%EBP: %x  %%SS: %x\n"\
-"%%EIP: %x  %%CS: %x\n"\
-"%%GS: %x  %%FS: %x  %%ES: %x  %%DS: %x\n"\
-"%%EFLAGS: %x\n"
+const char * pg_fault_description = 
+{
+    "#PF: kernel-space: read: (non-present)",
+    "#PF: kernel-space: read: (present)",
+    "#PF: kernel-space: write: (read/write non-present)",
+    "#PF: kernel-space: write: (read/write present)",
 
-void kpanic_reg_dump(reg_frame_t * regs);
+    "#PF: user-space: read: (user non-present)",
+    "#PF: user-space: read: (user present)",
+    "#PF: user-space: write: (user read/write non-present)",
+    "#PF: user-space: write: (user read/write present)"
+}; 
 
-void kpanic(char * err, char * file, int line, reg_frame_t * regs);
 
-void __stop();
 
-#endif
+//TODO exception handler make a function type
+
+
+void page_fault(reg_frame_t * regs)
+{
+    virt_t cr2 = __pf_addr();
+
+    set_bg(RED);
+
+    kprintf("PAGE FAULT! CANNOT RECOVER!\n%s\n\n", &pg_fault_description[(regs->err_code & 0b111)]);
+    kprintf("Error Code: %x\n", regs->err_code);
+    kprintf("Caused by vaddr[%%CR2]: %x\n\n", cr2);
+
+    kpanic_reg_dump(regs);
+
+    __stop();
+}
+
+void pg_set_handler()
+{
+    idt_set_handler(PG_PAGE_FAULT_CODE, &page_fault);
+}

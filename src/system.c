@@ -76,13 +76,8 @@ static  char * exceptions[256] =
 
 void set_bg(uint8 bg);
 
-void kpanic(char * err, char * file, int line, reg_frame_t * regs)
+void kpanic_reg_dump(reg_frame_t * regs)
 {
-    set_bg(RED);
-    //set_fg(WHITE);
-    kprintf("STOP!!! KERNEL PANIC!!!\n");
-    kprintf("Cause: %s\nError Code: %x\n", exceptions[regs->int_no], regs->err_code);
-    kprintf("Caused by %s:%d\n\n", file, line);
     kprintf("CPU FRAME - REGISTERS DUMP\n"PANIC_MSG,
     regs->eax, regs->ebx, regs->ecx, 
     regs->edx, regs->edi, regs->esi,
@@ -90,11 +85,20 @@ void kpanic(char * err, char * file, int line, reg_frame_t * regs)
     regs->eip, regs->cs,
     regs->gs,regs->fs, regs->es, regs->ds,
     regs->eflags);
+}
+
+void kpanic(char * err, char * file, int line, reg_frame_t * regs)
+{
+    set_bg(RED);
+    //set_fg(WHITE);
+    kprintf("STOP!!! KERNEL PANIC!!!\n");
+    kprintf("Cause: %s\nError Code: %x\n", exceptions[regs->int_no], regs->err_code);
+    kprintf("Caused by %s:%d\n\n", file, line);
+    kpanic_reg_dump(regs);    
 
     //error code and intno
     //TODO EFLAGS
 
-    asm("__panic:;hlt;jmp __panic");
-
+    __stop();
     
 }
