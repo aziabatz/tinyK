@@ -29,19 +29,34 @@ mboot:
 .long end
 .long __start 
 
+
+/**
+ *
+ */
 __start:
     cli
     mov $_kernel_stack, %esp
     push $STACK_SIZE
-    push %eax
-    push %ebx
+    push %eax //Magic Number pointer
+    push %ebx // Multiboot structure pointer
     call __boot_idpag
     xor %ebp, %ebp
     call _kmain
 
+.global __hold_on
+.global __stop
+__hold_on:
+    hlt
+    nop
+    jmp __hold_on
+
+__stop:
+    cli
+    hlt
+    jmp __stop
+
 .global __boot_idpag
 __boot_idpag:
-    xchg %bx,%bx
     mov $0, %eax // start vaddr
     mov $_boot_pt, %ebx //page table start
     mov $_end, %ecx //last addr
@@ -74,19 +89,6 @@ __boot_idpag:
 
     call __set_pg //set paging flag
 ret
-
-.global __hold_on
-.global __stop
-__hold_on:
-    hlt
-    nop
-    jmp __hold_on
-
-__stop:
-    cli
-    hlt
-    jmp __stop
-
 
 .section .bss
 _kernel_stack_bottom:
