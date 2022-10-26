@@ -48,6 +48,7 @@
 #include <debug.h>
 #include <dev/pit/timer.h>
 #include <mem/paging.h>
+#include <mem/phys.h>
 
 extern void __hold_on();
 extern void __boot_idpag();
@@ -71,6 +72,10 @@ int _kmain(multiboot_info_t * multiboot,
 
     kinfo(INFO, "Bootstrap OK!");
 
+    mboot_mmap_load(multiboot);
+    
+    mboot_show_mmap();
+
     //memory detection
     if(multiboot->mem_upper < (10*1024))
     {
@@ -91,6 +96,8 @@ int _kmain(multiboot_info_t * multiboot,
     timer_init();
 
     pg_set_handler();
+
+   
 
     __hold_on();
 

@@ -80,7 +80,7 @@ void kprint_hex(uint32 hex)
         hex_str[j] = c_hex[(hex >> (4*i) & 0x0F)];
     }
 
-    kprint("0x");
+    //kprint("0x");
     kprint(hex_str);
 }
 
