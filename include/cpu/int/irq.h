@@ -1,11 +1,12 @@
-/*
- * Created: Tuesday, October 11th 2022, 10:45:55 pm
- * Author: Ahmed Ziabat Ziabat
+/**
+ * \file irq.h
+ * \date Tuesday, October 11th 2022, 10:45:55 pm
+ * \author Ahmed Ziabat Ziabat
  * 
  * 
  * BSD 3-Clause License
  * 
- * Copyright (c) 2022, Ahmed Ziabat Ziabat <aziabatz@alumnos.unex.es>
+ * \copyright Copyright (c) 2022, Ahmed Ziabat Ziabat <aziabatz@alumnos.unex.es>
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -32,6 +33,9 @@
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * 
+
+ * \brief Fichero de cabecera para interrupciones hardware
  */
 
 
@@ -41,10 +45,18 @@
 
 #include <stdbool.h>
 #include <cpu/regs.h>
+#include <cpu/int/handler.h>
 
-typedef void (*__handler)(reg_frame_t *);
-
+/**
+ * \brief Asigna un manejador a una línea de interrupcion
+ * \param irqn Número de la línea de interrupción
+ * \param handler Puntero a la función manejador
+ */
 void set_irq_handler(uint32 irqn, __handler handler);
+
+/**
+ * \brief Instala en la tabla 
+ */
 void install_irq();
 void irq_init();
 

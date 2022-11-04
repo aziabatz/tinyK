@@ -1,11 +1,12 @@
-/*
- * Created: Tuesday, October 11th 2022, 9:14:23 pm
- * Author: Ahmed Ziabat Ziabat
+/**
+ * \file idt.h
+ * \date Tuesday, October 18th 2022, 5:05:18 pm
+ * \author Ahmed Ziabat Ziabat
  * 
  * 
  * BSD 3-Clause License
  * 
- * Copyright (c) 2022, Ahmed Ziabat Ziabat <aziabatz@alumnos.unex.es>
+ * \copyright Copyright (c) 2022, Ahmed Ziabat Ziabat <aziabatz@alumnos.unex.es>
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -33,8 +34,10 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
- * 
+
+ * \brief Tabla de descriptores de interrupción
  */
+
 #ifndef TK_IDT_H
 #define TK_IDT_H
 

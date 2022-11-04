@@ -63,6 +63,19 @@ void test()
     kprintf("Also let's try the -543 of before unsigned: %u\n", -543);
 }
 
+void charmap()
+{
+    kprintf("ASCII CHARMAP\n");
+    for(int i = 0; i < 16; i ++)
+    {
+        for(int j = 0; j < 16; j++)
+        {
+            kprintf("%c ", 16*i+j);
+        }
+        kprintf("\n");
+    }
+}
+
 int _kmain(multiboot_info_t * multiboot,
            uint32 magicnum,
            uint32 stack)
@@ -97,7 +110,7 @@ int _kmain(multiboot_info_t * multiboot,
 
     pg_set_handler();
 
-   
+    charmap();
 
     __hold_on();
 
