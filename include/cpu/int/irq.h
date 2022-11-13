@@ -55,12 +55,20 @@
 void set_irq_handler(uint32 irqn, __handler handler);
 
 /**
- * \brief Instala en la tabla 
+ * \brief Instala en la tabla de interrupciones las puertas de interrupción de las solicitudes de interrupción hardware
  */
 void install_irq();
+
+/**
+ * \brief Inicializa todo lo relacionado con las solicitudes de interrupción hardware para ser usados por el núcleo
+ */
 void irq_init();
 
 //FIXME should only be visible by asm file
+/**
+ * \brief Manejador de interrupción hardware común. Obtiene el número de interrupción y envía los registros recibidos al manejador específico correspondiente
+ * \param regs Marco de registros de la CPU en el instante de la interrupción
+ */
 void irq_handler(reg_frame_t * regs);
 
 #endif
