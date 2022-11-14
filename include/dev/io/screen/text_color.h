@@ -37,6 +37,8 @@
 #ifndef TK_TEXT_COLOR_H
 #define TK_TEXT_COLOR_H
 
+#include <types.h>
+
 #define LIGHT(colour) (0x80 | colour)
 
 #define BLACK           0
