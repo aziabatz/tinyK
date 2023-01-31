@@ -1,5 +1,5 @@
 /**
- * \date Sunday, October 23rd 2022, 6:30:50 pm
+ * \date Monday, October 17th 2022, 6:42:24 pm
  * \author Ahmed Ziabat Ziabat
  * 
  * 
@@ -37,51 +37,47 @@
  * \brief
  */
 
-#include <mem/phys.h>
-#include <stddef.h>
+#include <mem/virt/paging.h>
+#include <mem/types.h>
+#include <mem/virt/util.h>
 #include <printf.h>
+#include <system.h>
+#include <dev/io/screen/text_color.h>
 
-#define MEM_TABLE_SEPARATOR "-----------------------------------------------------------------"
-#define MEM_TABLE_HEADER    "|BASE              |LENGTH            |\tSIZE\t|TYPE"
-#define MEM_TABLE_ROW       "|0x%x%x|0x%x%x|\t%d\t|(%d)%s\n"
-
-static multiboot_info_t * mboot_info = NULL;
-static size_t mboot_mmap_len = 0;
-static uint32 mboot_mmap_addr = 0;
-
-static const char * phys_ram_str[6] = {
-    "RAM?!",
-    MBOOT_AVAILABLE_STR,
-    MBOOT_RESERVED_STR,
-    MBOOT_ACPI_RECLAIMABLE_STR,
-    MBOOT_NVS_STR,
-    MBOOT_BADRAM_STR
-};
-
-void mboot_mmap_load(multiboot_info_t * mboot)
+const char * pg_fault_description[8] = 
 {
-    mboot_info = mboot;
-    mboot_mmap_len = mboot->mmap_length;
-    mboot_mmap_addr = mboot->mmap_addr;
+    "#PF: kernel-space: read: (non-present)",
+    "#PF: kernel-space: read: (present)",
+    "#PF: kernel-space: write: (read/write non-present)",
+    "#PF: kernel-space: write: (read/write present)",
 
-    kprintf("Multiboot mmap size is: %d/%d = %d entries\n", mboot_mmap_len, sizeof(multiboot_memory_map_t),mboot_mmap_len/sizeof(multiboot_memory_map_t));
+    "#PF: user-space: read: (user non-present)",
+    "#PF: user-space: read: (user present)",
+    "#PF: user-space: write: (user read/write non-present)",
+    "#PF: user-space: write: (user read/write present)"
+}; 
+
+
+
+//TODO exception handler make a function type
+
+
+void page_fault(reg_frame_t * regs)
+{
+    virt_t cr2 = __pf_addr();
+
+    set_bg(RED);
+
+    kprintf("PAGE FAULT! CANNOT RECOVER!\n%s\n\n", pg_fault_description[(regs->err_code & 0b111)]);
+    kprintf("Error Code: %x\n", regs->err_code);
+    kprintf("Caused by vaddr[%%CR2]: %x\n\n", cr2);
+
+    kpanic_reg_dump(regs);
+
+    __stop();
 }
 
-void mboot_show_mmap()
+void pg_set_handler()
 {
-    //kprintf("--------------------------------------------------------------------------------\n");
-  //  kprintf("|BASE------|LENGTH----|TYPE----|\n");
-    //kprintf("|---------------|------------|-------------------------------------------------|\n");
-
-    kprintf("%s\n", MEM_TABLE_HEADER);
-    kprintf("%s\n", MEM_TABLE_SEPARATOR);
-
-    multiboot_memory_map_t * mmap;//= mboot_info->mmap_addr;
-
-    for(size_t entry = 0; entry < mboot_mmap_len; entry += sizeof(multiboot_memory_map_t))
-    {
-        mmap = mboot_mmap_addr + entry;
-        kprintf(MEM_TABLE_ROW, mmap->addr_high, mmap->addr_low, mmap->len_high, mmap->len_low, mmap->size, mmap->type, phys_ram_str[mmap->type]);
-        //kprintf("%s\n", MEM_TABLE_SEPARATOR);
-    }
+    idt_set_handler(PG_PAGE_FAULT_CODE, &page_fault);
 }

@@ -43,8 +43,6 @@
 #include <types.h>
 #include <cpu/int/idt.h>
 
-typedef uint32 phys_t;
-typedef uint32 virt_t;
 
 #define PG_MAX_PTE                  1024
 #define PG_MAX_PDE                  1024

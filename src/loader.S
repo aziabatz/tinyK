@@ -60,6 +60,7 @@ __boot_idpag:
     mov $0, %eax // start vaddr
     mov $_boot_pt, %ebx //page table start
     mov $_end, %ecx //last addr
+    add $0x1000, %ecx
 
     idpag:
         andl $0xFFFFF000, %eax // discard bits for alignment

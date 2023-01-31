@@ -36,8 +36,6 @@
 #include <types.h>
 #include <boot/multiboot.h>
 
-
-
 #include <dev/io/screen/vga.h>
 #include <str.h>
 #include <cpu/task/gdt.h>
@@ -47,8 +45,9 @@
 #include <printf.h>
 #include <debug.h>
 #include <dev/pit/timer.h>
-#include <mem/paging.h>
-#include <mem/phys.h>
+#include <mem/virt/paging.h>
+#include <mem/phys/pm_map.h>
+#include <mem/phys/pm_mgr.h>
 
 extern void __hold_on();
 extern void __boot_idpag();
@@ -106,11 +105,12 @@ int _kmain(multiboot_info_t * multiboot,
     idt_init();
     kinfo(INFO, "IDT Loaded");
 
+    
+
     timer_init();
 
     pg_set_handler();
-
-    charmap();
+    pm_mgr_init(NULL, multiboot->mem_lower + multiboot->mem_upper);
 
     __hold_on();
 
