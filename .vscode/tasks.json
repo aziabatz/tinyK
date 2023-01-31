@@ -1,0 +1,28 @@
+{
+    "tasks": [
+        {
+            "label": "Lanzar QEMU",
+            "type": "shell",
+            "command": "echo QEMU& qemu-system-i386 -kernel ${workspaceFolder}/tinykernel.bin -S -gdb tcp::1234 -m 512",
+            "isBackground": true,
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^(QEMU)",
+                    "line": 1,
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^(QEMU)",
+                    "endsPattern": "^(QEMU)"
+                }
+            }
+        },
+        {
+            "label": "Parar QEMU",
+            "type": "shell",
+            "command": "pkill qemu-system-*"
+        }
+
+    ],
+    "version": "2.0.0"
+}

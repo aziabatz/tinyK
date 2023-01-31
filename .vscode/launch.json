@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "type": "gdb",
+            "request": "attach",
+            "name": "Attach to gdbserver",
+            "executable": "${workspaceRoot}/tinykernel.bin",
+            "target": "localhost:1234",
+            "remote": true,
+            "cwd": "${workspaceRoot}",
+            "valuesFormatting": "prettyPrinters",
+            "preLaunchTask": "Lanzar QEMU",
+            "postDebugTask": "Parar QEMU",
+            "showDevDebugOutput": true   
+        }
+    ]
+}

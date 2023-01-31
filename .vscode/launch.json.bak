@@ -1,0 +1,46 @@
+{
+    "configurations": [
+        {
+            "name": "C/C++: i686-elf-gcc Depurar el archivo activo",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/tinykernel.bin",
+            "args": [],
+            "targetArchitecture": "x86",
+            "stopAtEntry": false,
+            "cwd": "${workspaceRoot}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "customLaunchSetupCommands": [
+                {
+                    "text": "target remote localhost:1234",
+                    "description": "Asociarse a QEMU"
+                }
+            ],
+            "setupCommands": [
+                {
+                    "description": "Habilitar la impresión con sangría para gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Establecer tipo de desensamblado en Intel",
+                    "text": "-gdb-set disassembly-flavor att",
+                    "ignoreFailures": true
+                },
+                {
+                    "text": "file ${workspaceRoot}/tinykernel.bin",
+                    "description": "Especificar el binario que se va a depurar"
+                },
+                {
+                    "text": "break isr_handler",
+                    "description": "Parar siempre que se recibe una excepcion"
+                }
+            ],
+            "preLaunchTask": "Lanzar QEMU",
+            "miDebuggerPath": "/usr/bin/gdb",
+        }
+    ],
+    "version": "2.0.0"
+}

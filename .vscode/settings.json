@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "types.h": "c",
+        "pm_mgr.h": "c",
+        "multiboot.h": "c",
+        "stddef.h": "c",
+        "printf.h": "c",
+        "mem.h": "c"
+    }
+}
