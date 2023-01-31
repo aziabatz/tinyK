@@ -1,6 +1,11 @@
 {
     "tasks": [
         {
+            "label": "Compilar kernel",
+            "type": "shell",
+            "command": "make -B"
+        },
+        {
             "label": "Lanzar QEMU",
             "type": "shell",
             "command": "echo QEMU& qemu-system-i386 -kernel ${workspaceFolder}/tinykernel.bin -S -gdb tcp::1234 -m 512",
@@ -15,7 +20,8 @@
                     "beginsPattern": "^(QEMU)",
                     "endsPattern": "^(QEMU)"
                 }
-            }
+            },
+            "dependsOn": "Compilar kernel"
         },
         {
             "label": "Parar QEMU",
