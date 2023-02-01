@@ -39,6 +39,8 @@ __start:
     push $STACK_SIZE // kernel stack addr esp+12
     push %eax //Magic Number pointer esp+8
     push %ebx // Multiboot structure pointer esp+4
+    mov $_boot_pd, %ebx
+    push %ebx // Kernel page directory
     call __boot_idpag
     xor %ebp, %ebp
     call _kmain
@@ -60,7 +62,6 @@ __boot_idpag:
     mov $0, %eax // start vaddr
     mov $_boot_pt, %ebx //page table start
     mov $_end, %ecx //last addr
-    add $0x1000, %ecx
 
     idpag:
         andl $0xFFFFF000, %eax // discard bits for alignment

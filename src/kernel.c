@@ -1,27 +1,27 @@
 /*
  * Created: Monday, October 10th 2022, 1:05:09 pm
  * Author: Ahmed Ziabat Ziabat
- * 
- * 
+ *
+ *
  * BSD 3-Clause License
- * 
+ *
  * Copyright (c) 2022, Ahmed Ziabat Ziabat <aziabatz@alumnos.unex.es>
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice, this
  *    list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. Neither the name of the copyright holder nor the names of its
  *    contributors may be used to endorse or promote products derived from
  *    this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -54,7 +54,7 @@ extern void __boot_idpag();
 
 void test()
 {
-    kprintf("%s\n","testing kprintf:");
+    kprintf("%s\n", "testing kprintf:");
     kprintf("Hello %s, a random number in hex: %x\n", "world", 0xA83ED);
     kprintf("And now a char %c and a null str: %s\n", 'a', NULL);
     kprintf("Let's try a formatting... %h and %%\n");
@@ -65,54 +65,51 @@ void test()
 void charmap()
 {
     kprintf("ASCII CHARMAP\n");
-    for(int i = 0; i < 16; i ++)
+    for (int i = 0; i < 16; i++)
     {
-        for(int j = 0; j < 16; j++)
+        for (int j = 0; j < 16; j++)
         {
-            kprintf("%c ", 16*i+j);
+            kprintf("%c ", 16 * i + j);
         }
         kprintf("\n");
     }
 }
 
-int _kmain(multiboot_info_t * multiboot,
+int _kmain(pg_dir_t *kdir,
+           multiboot_info_t *multiboot,
            uint32 magicnum,
            uint32 stack)
 {
-    driver_t * vga = install_vga();
+    driver_t *vga = install_vga();
     set_tty_dev(vga);
 
     kinfo(INFO, "Bootstrap OK!");
 
     mboot_mmap_load(multiboot);
-    
+
     mboot_show_mmap();
 
-    //memory detection
-    if(multiboot->mem_upper < (10*1024))
+    // memory detection
+    if (multiboot->mem_upper < (10 * 1024))
     {
         kinfo(WARNING, "Total system RAM is below 10Mib!");
     }
     kprintf("\t\tRecognized memory: low=%d(KB)    high=%d(KB)\n", multiboot->mem_lower, multiboot->mem_upper);
 
-    //init system
+    // init system
     gdt_init();
     kinfo(INFO, "GDT Loaded");
-    
+
     irq_init();
     kinfo(INFO, "IRQ is set");
 
     idt_init();
     kinfo(INFO, "IDT Loaded");
 
-    
-
     timer_init();
 
     pg_set_handler();
-    pm_mgr_init(NULL, multiboot->mem_lower + multiboot->mem_upper);
+    pm_mgr_init(NULL, multiboot->mem_lower + multiboot->mem_upper, kdir);
 
     __hold_on();
-
-    
-} 
+}
