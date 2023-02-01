@@ -42,7 +42,7 @@
 
 #include <types.h>
 #include <cpu/int/idt.h>
-
+#include "../types.h"
 
 #define PG_MAX_PTE                  1024
 #define PG_MAX_PDE                  1024
@@ -57,6 +57,8 @@
 #define PVIRT_DIR_SHIFT             0x16
 #define PVIRT_TAB_SHIFT             0x0C
 
+
+
 #define PG_PTE_PRESENT              (1 << 0)
 #define PG_PTE_READ_WRITE           (1 << 1)
 #define PG_PTE_USER_KERNEL          (1 << 2)
@@ -69,6 +71,8 @@
 #define PG_PTE_AVAILABLE            (0b111 << 9)
 #define PG_PTE_FRAME                ~(PG_ENTRY_FLAGS)
 
+#define PG_PTE_IDX(v)               ((v & 0x3FF000) >> 12)
+
 #define PG_PDE_PRESENT              PG_PTE_PRESENT
 #define PG_PDE_READ_WRITE           PG_PTE_READ_WRITE
 #define PG_PDE_USER_KERNEL          PG_PTE_USER_KERNEL
@@ -79,10 +83,32 @@
 #define PG_PDE_SIZE                 (0 << 7) // For now only 4KB pages
 #define PG_PDE_FRAME                PG_PTE_FRAME
 
+#define PG_PDE_IDX(v)               ((v & 0xFFC00000) >> 20)
+
+#define PG_PAGE_OFFSET(v)           (v & 0xFFF)
+
 #define PG_ALIGNED_4K(address)      (0 == (address & PAGING_ENTRY_FLAGS))
 
 #define PG_FAULT_MESSAGE            "US RW  P - Cause?\n" \
                                     "%d  %d  %d   %s\n"
+
+typedef phys_t page_t;
+
+typedef uint16 page_flags_t;
+
+struct pg_table
+{
+    page_t pages[PG_MAX_PTE];
+};
+
+typedef struct pg_table pg_table_t;
+
+struct pg_directory
+{
+    pg_table_t * tables[PG_MAX_PDE];
+};
+
+typedef struct pg_directory pg_dir_t;
 
 void pg_set_handler(void);
 

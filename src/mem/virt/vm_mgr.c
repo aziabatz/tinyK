@@ -1,6 +1,6 @@
 /**
- * \file pm_mgr.h
- * \date Friday, January 27th 2023, 5:12:12 pm
+ * \file vm_mgr.c
+ * \date Wednesday, February 1st 2023, 11:12:00 pm
  * \author Ahmed Ziabat Ziabat
  * 
  * 
@@ -35,38 +35,52 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  * 
- * \brief Fichero cabecera para el manejador de memoria fisica
+ * \brief Fichero fuente para manejador de memoria virtual
  */
 
-
-#ifndef TK_PHYS_MGR_H
-#define TK_PHYS_MGR_H
-
-#include <types.h>
-#include <boot/multiboot.h>
+#include <mem/virt/vm_mgr.h>
+#include <system.h>
+#include <debug.h>
 #include <stddef.h>
-#include "../virt/paging.h"
 
-// \brief Tamaño mínimo de bloque en bytes(una pagina por defecto)
-#define BLOCK_SIZE 4096
-
-// \brief Número de bloques por cada byte del bitmap (cada bit direcciona toda una página de 4K)
-#define BLOCKS_PER_BYTE 8
-
-#define BLOCKS_ALL_USED 0xFF
-#define BLOCKS_NONE_USED 0x00
-
-struct pm_mgr_info
+pg_dir_t * create_page_directory()
 {
-    size_t bitmap_length;
-    size_t free_blocks;
-    uint8 * bitmap;
-};
+    return NULL;
+}
 
-typedef struct pm_mgr_info pm_mgr_t;
+pg_table_t * create_page_table(pg_dir_t* dir, uint16 pd_index)
+{
+    return NULL;
+}
 
-void * pm_mgr_init(multiboot_memory_map_t * mb_map, size_t memory_size, pg_dir_t * dir);
+virt_t map_addr(pg_dir_t * dir, phys_t paddr, virt_t vaddr, page_flags_t flags)
+{
+    uint16 pde = PG_PDE_IDX(vaddr);
+    uint16 pte = PG_PTE_IDX(vaddr);
 
-void * getAvailableMemory(multiboot_memory_map_t * mb_mmap);
+    pg_table_t * table = dir->tables[pde];
+    if((!table && PG_PTE_PRESENT))
+    {
+        kinfo(ERROR, "Page Table not present. NOT IMPLEMENTED");
+        __stop();
+    }
 
-#endif
+    //limpiar flags de la direccion
+    table = ((uintptr_t)table) & ((uintptr_t)PG_PDE_FRAME);
+
+    
+
+    table->pages[pte] = paddr & PG_PTE_FRAME | (flags & PG_ENTRY_FLAGS);
+
+    
+
+    //acceder a la posicion en PD
+    //si la tabla no esta presente
+        //crear tabla
+    //acceder a la posicion en PT
+    //paginar direccion fisica
+    //escribir flags 
+    
+    return vaddr & PG_PTE_FRAME;
+}
+
