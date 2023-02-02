@@ -111,5 +111,15 @@ int _kmain(pg_dir_t *kdir,
     pg_set_handler();
     pm_mgr_init(NULL, multiboot->mem_lower + multiboot->mem_upper, kdir);
 
+    size_t total, free;
+    pm_mgr_get_status(&total, &free);
+
+    kprintf("Physical Memory Manager:\n"
+        "Total pages: %u\n"
+        "Free pages: %u\n"
+        "Used pages: %u\n"
+        "Aprox. use: %u%%\n",
+        total, free, total-free, 100*(total-free)/total);
+
     __hold_on();
 }

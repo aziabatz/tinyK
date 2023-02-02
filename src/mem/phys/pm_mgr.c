@@ -44,9 +44,65 @@
 #include <mem.h>
 #include <mem/virt/paging.h>
 #include <mem/virt/vm_mgr.h>
+#include <mem/phys/pm_map.h>
+#include <stdbool.h>
+
 
 static pm_mgr_t pm_manager;
 extern const uint32 end;
+
+#define SUPERBLOCK_OF(p)         (p/BLOCKS_PER_BYTE)
+#define OFFSET_OF(p)        (p%BLOCKS_PER_BYTE)
+
+static inline void free_block(uint32 block)
+{
+    uint32 idx = SUPERBLOCK_OF(block);
+    // Mascara de 0 únicamente del bloque que queremos
+    pm_manager.bitmap[idx] &= ~(1 << OFFSET_OF(block));
+    pm_manager.free_blocks++;
+}
+
+static inline void use_block(uint32 block)
+{
+    uint32 idx = SUPERBLOCK_OF(block);
+    pm_manager.bitmap[idx] |= 1 << OFFSET_OF(block);
+    pm_manager.free_blocks--;
+}
+
+static inline bool status_block(uint32 block)
+{
+    uint32 idx = SUPERBLOCK_OF(block);
+    uint8 superblock = pm_manager.bitmap[idx];
+    return (superblock & OFFSET_OF(block));
+}
+
+void pm_mgr_free(phys_t address)
+{
+
+}
+
+phys_t pm_mgr_alloc(phys_t address, size_t pages)
+{
+    
+}
+
+static inline load_region(phys_t base, size_t length, uint8 type)
+{
+    // bloque donde empieza la region
+    phys_t start = base / BLOCK_SIZE;
+    // numero de bloques del tamaño de la region
+    size_t number_of_blocks = length / BLOCK_SIZE;
+
+    for(int block = start; block < number_of_blocks; block++)
+    {
+        //TODO Liberar tambien ACPI y NVS
+        if(type == MULTIBOOT_MEMORY_AVAILABLE)
+        {
+            free_block(block);
+            
+        }
+    }
+}
 
 void *pm_mgr_init(multiboot_memory_map_t *mb_map, size_t memory_size, pg_dir_t *dir)
 {
@@ -74,16 +130,34 @@ void *pm_mgr_init(multiboot_memory_map_t *mb_map, size_t memory_size, pg_dir_t *
         map_addr(dir, pm_manager.bitmap+(0x1000*pg), pm_manager.bitmap+(0x1000*pg), PG_PTE_PRESENT | PG_PTE_READ_WRITE);
     }
 
-    
 
     for (size_t block = 0; block < pm_manager.bitmap_length; block++)
     {
         pm_manager.bitmap[block] = BLOCKS_ALL_USED;
     }
 
-    // memset(pm_manager.bitmap, BLOCKS_ALL_USED, pm_manager.bitmap_length);
+
+    int e = 0;
+    multiboot_memory_map_t * map;
+    while(map)
+    {
+        map = mboot_get_mmap_entry(e);
+
+        if(map->addr_high || map->len_high)
+            break;
+
+        load_region(map->addr_low, map->len_low, map->type);
+
+        e++;
+    }
+
+    //TODO MARCAR USADOS SEGUN PAGINAS DEL KDIR
+
+
 }
 
-void *getAvailableMemory(multiboot_memory_map_t *mb_mmap)
-{
+// FIXME Si se recibe NULL en alguno, no escribir nada en los punteros
+void pm_mgr_get_status(size_t * total, size_t * free){
+    *total = pm_manager.bitmap_length * BLOCKS_PER_BYTE;
+    *free = pm_manager.free_blocks;
 }

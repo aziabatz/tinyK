@@ -67,6 +67,6 @@ typedef struct pm_mgr_info pm_mgr_t;
 
 void * pm_mgr_init(multiboot_memory_map_t * mb_map, size_t memory_size, pg_dir_t * dir);
 
-void * getAvailableMemory(multiboot_memory_map_t * mb_mmap);
+void pm_mgr_get_status(size_t * total, size_t * free);
 
 #endif
