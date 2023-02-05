@@ -102,3 +102,11 @@ void kpanic(char * err, char * file, int line, reg_frame_t * regs)
     __stop();
     
 }
+
+void __assert(const char * msg, const char * file, unsigned int line)
+{
+    set_bg(RED);
+    kprintf("[%s] ASSERT FAILED in:\n%s:%d\n",
+        msg, file, line);
+    __stop();
+}
