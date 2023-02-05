@@ -46,10 +46,14 @@
 #include <mem/virt/vm_mgr.h>
 #include <mem/phys/pm_map.h>
 #include <stdbool.h>
+#include <debug.h>
+#include <assert.h>
 
 
 static pm_mgr_t pm_manager;
 extern const uint32 end;
+
+freed_blocks = 0;
 
 #define SUPERBLOCK_OF(p)         (p/BLOCKS_PER_BYTE)
 #define OFFSET_OF(p)        (p%BLOCKS_PER_BYTE)
@@ -60,6 +64,7 @@ static inline void free_block(uint32 block)
     // Mascara de 0 únicamente del bloque que queremos
     pm_manager.bitmap[idx] &= ~(1 << OFFSET_OF(block));
     pm_manager.free_blocks++;
+    freed_blocks++;
 }
 
 static inline void use_block(uint32 block)
@@ -73,17 +78,85 @@ static inline bool status_block(uint32 block)
 {
     uint32 idx = SUPERBLOCK_OF(block);
     uint8 superblock = pm_manager.bitmap[idx];
-    return (superblock & OFFSET_OF(block));
+    return (superblock & (1 << OFFSET_OF(block)));
 }
 
 void pm_mgr_free(phys_t address)
 {
+    // Si la direccion no esta alineada, ERROR y ALINEAR?
+    assert(PG_ALIGNED_4K(address));
+    free_block(address/BLOCK_SIZE);
+}
 
+
+
+static inline uint32 first_fit(uint32 superblock, size_t pages)
+{
+    //No podemos reservar 0 paginas
+    assert(pages);
+
+    //No podemos reservar mas memoria de la disponible
+    assert(pages <= pm_manager.free_blocks);
+
+    uint8 free_found = 0;
+    uint8 testing_bit = 0;
+
+    for(uint8 bit = 0; bit < BLOCKS_PER_BYTE; bit++)
+    {
+        //vemos si el bit esta marcado como usado
+        uint32 block = (superblock * BLOCKS_PER_BYTE) + bit;
+
+        if(!status_block(block))
+        {
+            if(free_found == 0)
+            {
+                testing_bit = bit;
+            }
+            free_found++;
+        }
+        else
+        {
+            //No sirve, volvemos a empezar de nuevo
+            free_found = 0;
+        }
+
+        if(free_found == pages)
+        {
+            return (superblock * BLOCKS_PER_BYTE) + testing_bit;
+        }
+    }
+
+    return NULL;
 }
 
 phys_t pm_mgr_alloc(phys_t address, size_t pages)
 {
-    
+    assert(PG_ALIGNED_4K(address));
+    //TODO BETTER LEGEABILITY
+    bool best_fit = (freed_blocks >= (pm_manager.bitmap_length/2)) ? true : false;
+
+    uint32 block = NULL;
+
+    for(size_t superblock = 0; superblock < pm_manager.bitmap_length; superblock++){
+        
+        if(pm_manager.bitmap[superblock] != BLOCKS_ALL_USED)
+        {
+            if(block = first_fit(superblock, pages))
+            {
+                break;
+            }
+        }
+    }
+
+    assert(block);
+
+    //Ahora que tenemos suficiente espacio marcamos como usados los bloques
+    for(size_t page = 0; page < pages; page++)
+    {
+        use_block(block+page);
+}
+
+    return block*BLOCK_SIZE;
 }
 
 static inline load_region(phys_t base, size_t length, uint8 type)
@@ -95,16 +168,15 @@ static inline load_region(phys_t base, size_t length, uint8 type)
 
     for(int block = start; block < number_of_blocks; block++)
     {
-        //TODO Liberar tambien ACPI y NVS
-        if(type == MULTIBOOT_MEMORY_AVAILABLE)
+        if(type == MULTIBOOT_MEMORY_AVAILABLE ||
+            type == MULTIBOOT_MEMORY_ACPI_RECLAIMABLE)
         {
             free_block(block);
-            
         }
     }
 }
 
-void *pm_mgr_init(multiboot_memory_map_t *mb_map, size_t memory_size, pg_dir_t *dir)
+void * pm_mgr_init(multiboot_memory_map_t *mb_map, size_t memory_size, pg_dir_t *dir)
 {
     //&end;//esto es end
 
@@ -153,7 +225,7 @@ void *pm_mgr_init(multiboot_memory_map_t *mb_map, size_t memory_size, pg_dir_t *
 
     //TODO MARCAR USADOS SEGUN PAGINAS DEL KDIR
 
-
+    pm_manager.bitmap[0] = BLOCKS_ALL_USED;
 }
 
 // FIXME Si se recibe NULL en alguno, no escribir nada en los punteros

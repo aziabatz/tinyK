@@ -121,5 +121,23 @@ int _kmain(pg_dir_t *kdir,
         "Aprox. use: %u%%\n",
         total, free, total-free, 100*(total-free)/total);
 
+    kprintf("Allocated %u block(s) at %x\n", 1, pm_mgr_alloc(0x1000, 1));
+    kprintf("Allocated %u block(s) at %x\n", 3, pm_mgr_alloc(0x1000, 3));
+    kprintf("Allocated %u block(s) at %x\n", 4, pm_mgr_alloc(0x1000, 4));
+    kprintf("Allocated %u block(s) at %x\n", 600, pm_mgr_alloc(0x1000, 600));
+
+    pm_mgr_get_status(&total, &free);
+
+    kprintf("Physical Memory Manager:\n"
+        "Total pages: %u\n"
+        "Free pages: %u\n"
+        "Used pages: %u\n"
+        "Aprox. use: %u%%\n",
+        total, free, total-free, 100*(total-free)/total);
+
+    
+    //pm_mgr_alloc(0x2004, 1);
+
+
     __hold_on();
 }

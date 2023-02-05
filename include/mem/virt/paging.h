@@ -87,7 +87,7 @@
 
 #define PG_PAGE_OFFSET(v)           (v & 0xFFF)
 
-#define PG_ALIGNED_4K(address)      (0 == (address & PAGING_ENTRY_FLAGS))
+#define PG_ALIGNED_4K(address)      (0 == (address & PG_ENTRY_FLAGS))
 
 #define PG_FAULT_MESSAGE            "US RW  P - Cause?\n" \
                                     "%d  %d  %d   %s\n"

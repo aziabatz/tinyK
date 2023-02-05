@@ -69,4 +69,10 @@ void * pm_mgr_init(multiboot_memory_map_t * mb_map, size_t memory_size, pg_dir_t
 
 void pm_mgr_get_status(size_t * total, size_t * free);
 
+void pm_mgr_free(phys_t address);
+
+//FIXME quitar address, solo vamos a reservar por num. de paginas
+phys_t pm_mgr_alloc(phys_t address, size_t pages);
+
+
 #endif
