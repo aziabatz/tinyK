@@ -90,7 +90,7 @@ void pm_mgr_free(phys_t address)
 
 
 
-static inline uint32 first_fit(uint32 superblock, size_t pages)
+static uint32 first_fit(size_t pages)
 {
     //No podemos reservar 0 paginas
     assert(pages);
@@ -98,55 +98,60 @@ static inline uint32 first_fit(uint32 superblock, size_t pages)
     //No podemos reservar mas memoria de la disponible
     assert(pages <= pm_manager.free_blocks);
 
-    uint8 free_found = 0;
-    uint8 testing_bit = 0;
+    size_t free_found = 0;
+    size_t testing_bit = 0;
 
-    for(uint8 bit = 0; bit < BLOCKS_PER_BYTE; bit++)
+    size_t total_blocks = BLOCKS_PER_BYTE * pm_manager.bitmap_length;
+
+    size_t total_libre = 0;
+
+    for(size_t block = 0; block < total_blocks; block++)
     {
-        //vemos si el bit esta marcado como usado
-        uint32 block = (superblock * BLOCKS_PER_BYTE) + bit;
-
-        if(!status_block(block))
+        if(status_block(block) == BLOCK_FREE)
         {
             if(free_found == 0)
             {
-                testing_bit = bit;
+                testing_bit = block;
             }
             free_found++;
+            total_libre++;
         }
         else
         {
-            //No sirve, volvemos a empezar de nuevo
+            //No sirve, empezar a contar de nuevo
+            if(free_found)
+                kprintf("Max bloques contiguos %d\n", free_found);
             free_found = 0;
         }
 
         if(free_found == pages)
         {
-            return (superblock * BLOCKS_PER_BYTE) + testing_bit;
+            return testing_bit;
         }
     }
-
+    kprintf("Max bloques libres %d\n", total_libre);
     return NULL;
 }
 
 phys_t pm_mgr_alloc(phys_t address, size_t pages)
 {
-    assert(PG_ALIGNED_4K(address));
+    //assert(PG_ALIGNED_4K(address));
     //TODO BETTER LEGEABILITY
     bool best_fit = (freed_blocks >= (pm_manager.bitmap_length/2)) ? true : false;
 
-    uint32 block = NULL;
+    // Recibimos el bloque valido si existe
+    uint32 block = first_fit(pages);
 
-    for(size_t superblock = 0; superblock < pm_manager.bitmap_length; superblock++){
+/*     for(size_t superblock = 0; superblock < pm_manager.bitmap_length; superblock++){
         
         if(pm_manager.bitmap[superblock] != BLOCKS_ALL_USED)
         {
-            if(block = first_fit(superblock, pages))
+            if(block = )
             {
                 break;
             }
         }
-    }
+    } */
 
     assert(block);
 
@@ -154,7 +159,7 @@ phys_t pm_mgr_alloc(phys_t address, size_t pages)
     for(size_t page = 0; page < pages; page++)
     {
         use_block(block+page);
-}
+    }
 
     return block*BLOCK_SIZE;
 }
@@ -180,9 +185,11 @@ void * pm_mgr_init(multiboot_memory_map_t *mb_map, size_t memory_size, pg_dir_t 
 {
     //&end;//esto es end
 
+    // Total de memoria en bytes
     size_t mem_size_bytes = memory_size * 1024;
     size_t number_of_blocks = mem_size_bytes / BLOCK_SIZE;
 
+    // bitmap_length es la longitud del vector en bytes
     pm_manager.bitmap_length = number_of_blocks / BLOCKS_PER_BYTE;
 
     // indicamos que toda la memoria esta en uso
@@ -208,7 +215,6 @@ void * pm_mgr_init(multiboot_memory_map_t *mb_map, size_t memory_size, pg_dir_t 
         pm_manager.bitmap[block] = BLOCKS_ALL_USED;
     }
 
-
     int e = 0;
     multiboot_memory_map_t * map;
     while(map)
@@ -223,9 +229,20 @@ void * pm_mgr_init(multiboot_memory_map_t *mb_map, size_t memory_size, pg_dir_t 
         e++;
     }
 
+    pm_manager.bitmap[0] = BLOCKS_ALL_USED;
+
     //TODO MARCAR USADOS SEGUN PAGINAS DEL KDIR
 
-    pm_manager.bitmap[0] = BLOCKS_ALL_USED;
+    pg_table_t * kernel_page_table = dir->tables[0];
+    kernel_page_table = ((virt_t)kernel_page_table) & PG_PDE_FRAME;
+    for(size_t entry = 0; entry < PG_MAX_PTE; entry++)
+    {
+        page_t page = kernel_page_table->pages[entry];
+        page = ((phys_t)page) & PG_PTE_FRAME;
+        if(page){
+            use_block(entry);
+        }
+    }
 }
 
 // FIXME Si se recibe NULL en alguno, no escribir nada en los punteros

@@ -56,6 +56,9 @@
 #define BLOCKS_ALL_USED 0xFF
 #define BLOCKS_NONE_USED 0x00
 
+#define BLOCK_FREE 0
+#define BLOCK_USED 1
+
 struct pm_mgr_info
 {
     size_t bitmap_length;
