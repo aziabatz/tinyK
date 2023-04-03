@@ -40,13 +40,36 @@
 
 #include "../types.h"
 #include "paging.h"
+#include <stddef.h>
 
-pg_dir_t * create_page_directory();
+/**
+ * @brief Create a paging directory
+ * 
+ * @return pg_dir_t* The paging directory allocated in phyiscal memory
+ */
+pg_dir_t * create_paging_directory();
 
-//31-22 pdi
-//21-12 pti
-//11-0 off
-pg_table_t * create_page_table(pg_dir_t* dir, uint16 pd_index);
+/**
+ * @brief Create a paging table
+ * 
+ * @param dir The paging directory
+ * @param pd_index The entry index,
+ * @param flags The paging table flags
+ * @return pg_table_t* The paging table allocated in physical memory and set in the directory
+ */
+pg_table_t * create_paging_table(pg_dir_t* dir, uint16 pd_index, uint16 flags);
+
+/**
+ * @brief Create a page in a table
+ * 
+ * @param table 
+ * @param pt_index 
+ * @param flags 
+ * @return page_t* 
+ */
+page_t * create_page(pg_table_t * table, uint16 pt_index, uint16 flags);
 
 virt_t map_addr(pg_dir_t * dir, phys_t paddr, virt_t vaddr, page_flags_t flags);
+
+
 

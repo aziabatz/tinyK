@@ -60,6 +60,10 @@ __clear_pg:
     pop %eax
 ret
 
+__inv_pg:
+    invlpg 4(%esp)
+ret
+
 __load_pd:
     mov 4(%esp), %eax
     mov %eax, %cr3
