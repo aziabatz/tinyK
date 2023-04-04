@@ -133,7 +133,7 @@ static uint32 first_fit(size_t pages)
     return NULL;
 }
 
-phys_t pm_mgr_alloc(phys_t address, size_t pages)
+phys_t pm_mgr_alloc(size_t pages)
 {
     //assert(PG_ALIGNED_4K(address));
     //TODO BETTER LEGEABILITY
@@ -141,18 +141,7 @@ phys_t pm_mgr_alloc(phys_t address, size_t pages)
 
     // Recibimos el bloque valido si existe
     uint32 block = first_fit(pages);
-
-/*     for(size_t superblock = 0; superblock < pm_manager.bitmap_length; superblock++){
-        
-        if(pm_manager.bitmap[superblock] != BLOCKS_ALL_USED)
-        {
-            if(block = )
-            {
-                break;
-            }
-        }
-    } */
-
+    // Comprobar que se han satisfecho los bloques
     assert(block);
 
     //Ahora que tenemos suficiente espacio marcamos como usados los bloques

@@ -74,8 +74,9 @@ void pm_mgr_get_status(size_t * total, size_t * free);
 
 void pm_mgr_free(phys_t address);
 
-//FIXME quitar address, solo vamos a reservar por num. de paginas
-phys_t pm_mgr_alloc(phys_t address, size_t pages);
+phys_t pm_mgr_nalloc(phys_t address, size_t pages);
+
+phys_t pm_mgr_alloc(size_t pages);
 
 
 #endif

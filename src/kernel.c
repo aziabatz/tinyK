@@ -121,10 +121,10 @@ int _kmain(pg_dir_t *kdir,
         "Aprox. use: %u%%\n",
         total, free, total-free, 100*(total-free)/total);
 
-    kprintf("Allocated %u block(s) at %x\n", 1, pm_mgr_alloc(0x1000, 1));
-    kprintf("Allocated %u block(s) at %x\n", 3, pm_mgr_alloc(0x1000, 3));
-    kprintf("Allocated %u block(s) at %x\n", 4, pm_mgr_alloc(0x1000, 4));
-    kprintf("Allocated %u block(s) at %x\n", 600, pm_mgr_alloc(0x1000, 600));
+    kprintf("Allocated %u block(s) at %x\n", 1, pm_mgr_alloc(1));
+    kprintf("Allocated %u block(s) at %x\n", 3, pm_mgr_alloc(3));
+    kprintf("Allocated %u block(s) at %x\n", 4, pm_mgr_alloc(4));
+    kprintf("Allocated %u block(s) at %x\n", 600, pm_mgr_alloc(600));
 
     pm_mgr_get_status(&total, &free);
 
