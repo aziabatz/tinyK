@@ -199,14 +199,14 @@ void * pm_mgr_init(multiboot_memory_map_t *mb_map, size_t memory_size, pg_dir_t 
 
     // calculamos el numero de paginas que va a necesitar el mapa de bits
     // Cada 4096 bytes del bitmap es una pagina, y reservamos una extra para paginas "parciales"
-    size_t bitmap_paging_size = pm_manager.bitmap_length / PG_PAGE_SIZE ;
+    size_t bitmap_paging_size = pm_manager.bitmap_length / PG_PAGE_SIZE;
 
     if(pm_manager.bitmap_length % PG_PAGE_SIZE)
         bitmap_paging_size+=1;
 
     for (size_t pg = 0; pg < bitmap_paging_size; pg++)
     {
-        map_addr(dir, pm_manager.bitmap+(0x1000*pg), pm_manager.bitmap+(0x1000*pg), PG_PTE_PRESENT | PG_PTE_READ_WRITE);
+        vm_map(dir, pm_manager.bitmap+(0x1000*pg), pm_manager.bitmap+(0x1000*pg), PG_PTE_PRESENT | PG_PTE_READ_WRITE);
     }
 
 

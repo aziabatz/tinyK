@@ -42,34 +42,11 @@
 #include "paging.h"
 #include <stddef.h>
 
-/**
- * @brief Create a paging directory
- * 
- * @return pg_dir_t* The paging directory allocated in phyiscal memory
- */
-pg_dir_t * create_paging_directory();
 
-/**
- * @brief Create a paging table
- * 
- * @param dir The paging directory
- * @param pd_index The entry index,
- * @param flags The paging table flags
- * @return pg_table_t* The paging table allocated in physical memory and set in the directory
- */
-pg_table_t * create_paging_table(pg_dir_t* dir, uint16 pd_index, uint16 flags);
+virt_t vm_map(pg_dir_t * dir, phys_t paddr, virt_t vaddr, page_flags_t flags);
 
-/**
- * @brief Create a page in a table
- * 
- * @param table 
- * @param pt_index 
- * @param flags 
- * @return page_t* 
- */
-page_t * create_page(pg_table_t * table, uint16 pt_index, uint16 flags);
+void vm_unmap(pg_dir_t * dir, virt_t vaddr);
 
-virt_t map_addr(pg_dir_t * dir, phys_t paddr, virt_t vaddr, page_flags_t flags);
+virt_t vm_map_area(pg_dir_t * dir, phys_t paddr_from, virt_t vaddr_from, phys_t paddr_to, virt_t vaddr_to, page_flags_t flags);
 
-
-
+void vm_unmap_area(pg_dir_t * dir, virt_t vaddr_from, virt_t vaddr_to);
