@@ -60,6 +60,8 @@ freed_blocks = 0;
 
 static inline void free_block(uint32 block)
 {
+    // Prohibido liberar el bloque 0
+    assert(block);
     uint32 idx = SUPERBLOCK_OF(block);
     // Mascara de 0 únicamente del bloque que queremos
     pm_manager.bitmap[idx] &= ~(1 << OFFSET_OF(block));
