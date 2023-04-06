@@ -53,7 +53,7 @@
 static pm_mgr_t pm_manager;
 extern const uint32 end;
 
-freed_blocks = 0;
+uint32 freed_blocks = 0;
 
 #define SUPERBLOCK_OF(p)         (p/BLOCKS_PER_BYTE)
 #define OFFSET_OF(p)        (p%BLOCKS_PER_BYTE)
@@ -61,7 +61,12 @@ freed_blocks = 0;
 static inline void free_block(uint32 block)
 {
     // Prohibido liberar el bloque 0
-    assert(block);
+    if(!block)
+    {
+        kinfo(WARNING, "Freeing physical page 0 is not possible");
+        return;
+    }
+    
     uint32 idx = SUPERBLOCK_OF(block);
     // Mascara de 0 únicamente del bloque que queremos
     pm_manager.bitmap[idx] &= ~(1 << OFFSET_OF(block));
@@ -172,6 +177,39 @@ static inline load_region(phys_t base, size_t length, uint8 type)
     }
 }
 
+static inline virt_t map_to_dir(pg_dir_t * dir, phys_t paddr, virt_t vaddr, page_flags_t flags)
+{
+    uint16 pde = PG_PDE_IDX(vaddr);
+    uint16 pte = PG_PTE_IDX(vaddr);
+
+    pg_table_t * table = dir->tables[pde];
+    if((!table && PG_PTE_PRESENT))
+    {
+        kinfo(ERROR, "Page Table not present. NOT IMPLEMENTED");
+        /*FIXME implementar:
+            - bitmap maximo ocupa 128 kb
+            - Añadir el tamaño maximo de bitmap calculado
+            - Si la dir. es antes de alineado 0x1000, esa dir alineada sera la de la tabla
+            - Si la dir. es despues, coger la siguiente dir alin. 0x1000
+        */
+        __stop();
+    }
+
+    //limpiar flags de la direccion
+    table = ((uintptr_t)table) & ((uintptr_t)PG_PDE_FRAME);
+
+    table->pages[pte] = paddr & PG_PTE_FRAME | (flags & PG_ENTRY_FLAGS);
+
+    //acceder a la posicion en PD
+    //si la tabla no esta presente
+        //crear tabla
+    //acceder a la posicion en PT
+    //paginar direccion fisica
+    //escribir flags 
+    
+    return vaddr & PG_PTE_FRAME;
+}
+
 void * pm_mgr_init(multiboot_memory_map_t *mb_map, size_t memory_size, pg_dir_t *dir)
 {
     //&end;//esto es end
@@ -195,9 +233,14 @@ void * pm_mgr_init(multiboot_memory_map_t *mb_map, size_t memory_size, pg_dir_t 
     if(pm_manager.bitmap_length % PG_PAGE_SIZE)
         bitmap_paging_size+=1;
 
+    //Inicializamos el gestor de memoria virtual
+    vm_init(dir);
+
     for (size_t pg = 0; pg < bitmap_paging_size; pg++)
     {
-        vm_map(dir, pm_manager.bitmap+(0x1000*pg), pm_manager.bitmap+(0x1000*pg), PG_PTE_PRESENT | PG_PTE_READ_WRITE);
+        page_flags_t flags = PG_PTE_PRESENT | PG_PTE_READ_WRITE;
+        //vm_map_page(dir, flags);
+        map_to_dir(dir, pm_manager.bitmap+(0x1000*pg), pm_manager.bitmap+(0x1000*pg), flags);
     }
 
 

@@ -42,11 +42,10 @@
 #include "paging.h"
 #include <stddef.h>
 
-
-virt_t vm_map(pg_dir_t * dir, phys_t paddr, virt_t vaddr, page_flags_t flags);
+extern void __load_pd(pg_dir_t * dir);
+extern void __refresh_tlb();
+extern void __drop_page(virt_t vaddr);
 
 void vm_unmap(pg_dir_t * dir, virt_t vaddr);
-
-virt_t vm_map_area(pg_dir_t * dir, phys_t paddr_from, virt_t vaddr_from, phys_t paddr_to, virt_t vaddr_to, page_flags_t flags);
-
-void vm_unmap_area(pg_dir_t * dir, virt_t vaddr_from, virt_t vaddr_to);
+virt_t vm_map_page(pg_dir_t * dir, uint16 flags);
+void vm_init(pg_dir_t * kernel_dir);

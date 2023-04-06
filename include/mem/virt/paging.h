@@ -70,6 +70,7 @@
 #define PG_PTE_GLOBAL               (1 << 8)
 #define PG_PTE_AVAILABLE            (0b111 << 9)
 #define PG_PTE_FRAME                ~(PG_ENTRY_FLAGS)
+#define PG_PTE_GET_FRAME(v)         ((uintptr_t)v & PG_PTE_FRAME)
 
 #define PG_PTE_IDX(v)               ((v & 0x3FF000) >> 12)
 
@@ -82,12 +83,13 @@
 #define PG_PDE_AVAILABLE            (0b111101 << 6)
 #define PG_PDE_SIZE                 (0 << 7) // For now only 4KB pages
 #define PG_PDE_FRAME                PG_PTE_FRAME
+#define PG_PDE_GET_FRAME(v)         ((uintptr_t)v & PG_PDE_FRAME)
 
 #define PG_PDE_IDX(v)               ((v & 0xFFC00000) >> 20)
 
 #define PG_PAGE_OFFSET(v)           (v & 0xFFF)
 
-#define PG_ALIGNED_4K(address)      (0 == (address & PG_ENTRY_FLAGS))
+#define PG_ALIGNED_4K(address)      ((uintptr_t)address & PG_ENTRY_FLAGS) == 0
 
 #define PG_FAULT_MESSAGE            "US RW  P - Cause?\n" \
                                     "%d  %d  %d   %s\n"

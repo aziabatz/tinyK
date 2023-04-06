@@ -41,6 +41,10 @@
 #include "../paging.h"
 #include <stddef.h>
 
+#ifndef TK_GUARD_VM_MGR_ONLY
+    #error THIS FILE IS ONLY MEANT TO BE INCLUDED BY THE VM MANAGER (vm_mgr.c)
+#endif
+
 /**
  * @brief Create a paging directory
  * 

@@ -41,20 +41,24 @@
 #include "../paging.h"
 #include <stddef.h>
 
+#ifndef TK_GUARD_VM_MGR_ONLY
+    #error THIS FILE IS ONLY MEANT TO BE INCLUDED BY THE VM MANAGER (vm_mgr.c)
+#endif
+
 /**
  * @brief Create a page in a table
  * 
- * @param table 
- * @param pt_index 
- * @param flags 
- * @return page_t* 
+ * @param table Paging table
+ * @param pt_index Index of table entry
+ * @param flags Page flags
+ * @return page_t* The reference to the table entry
  */
-page_t * vm_alloc_page(pg_table_t * table, uint16 pt_index, phys_t address, uint16 flags);
+virt_t vm_alloc_page(pg_dir_t * dir, uint16 flags);
 
 /**
- * @brief Frees a page
+ * @brief Removes a page from a table
  * 
- * @param dir 
- * @param address 
+ * @param dir The current directory
+ * @param address The page virtual address
  */
 void vm_dealloc_page(pg_dir_t * dir, virt_t address);

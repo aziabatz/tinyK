@@ -48,6 +48,8 @@
 #include <mem/virt/paging.h>
 #include <mem/phys/pm_map.h>
 #include <mem/phys/pm_mgr.h>
+#include <mem/virt/vm_mgr.h>
+#include <mem/heap/heap.h>
 
 extern void __hold_on();
 extern void __boot_idpag();
@@ -114,7 +116,7 @@ int _kmain(pg_dir_t *kdir,
     size_t total, free;
     pm_mgr_get_status(&total, &free);
 
-    kprintf("Physical Memory Manager:\n"
+/*     kprintf("Physical Memory Manager:\n"
         "Total pages: %u\n"
         "Free pages: %u\n"
         "Used pages: %u\n"
@@ -126,6 +128,7 @@ int _kmain(pg_dir_t *kdir,
     kprintf("Allocated %u block(s) at %x\n", 4, pm_mgr_alloc(4));
     kprintf("Allocated %u block(s) at %x\n", 600, pm_mgr_alloc(600));
 
+
     pm_mgr_get_status(&total, &free);
 
     kprintf("Physical Memory Manager:\n"
@@ -133,10 +136,9 @@ int _kmain(pg_dir_t *kdir,
         "Free pages: %u\n"
         "Used pages: %u\n"
         "Aprox. use: %u%%\n",
-        total, free, total-free, 100*(total-free)/total);
+        total, free, total-free, 100*(total-free)/total); */
 
-    
-    //pm_mgr_alloc(0x2004, 1);
+    init_kheap(kdir, (PG_PTE_READ_WRITE | PG_PTE_PRESENT));
 
 
     __hold_on();

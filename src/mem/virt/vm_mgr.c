@@ -38,74 +38,181 @@
  * \brief Fichero fuente para manejador de memoria virtual
  */
 
+
+
 #include <mem/virt/vm_mgr.h>
 #include <system.h>
 #include <debug.h>
 #include <stddef.h>
+#include <mem/phys/pm_mgr.h>
+#include <mem.h>
+#include <assert.h>
 
-pg_dir_t * vm_do_dir()
+#ifndef TK_GUARD_VM_MGR_ONLY
+    #define TK_GUARD_VM_MGR_ONLY
+    #include <mem/virt/mgr/directory.h>
+    #include <mem/virt/mgr/table.h>
+    #include <mem/virt/mgr/page.h>
+#endif
+
+static pg_dir_t * kernel_directory = NULL;
+
+extern pg_dir_t * __get_current_dir();
+
+static inline pg_table_t * vm_new_table()
 {
-    return NULL;
+    pg_table_t * table = (pg_table_t*) pm_mgr_alloc(1);
+    memset(table, 0, sizeof(pg_table_t));
+    return table;
 }
 
-pg_table_t * vm_do_table(pg_dir_t* dir, uint16 pd_index, uint16 flags)
+static inline pg_dir_t * vm_new_dir()
 {
-    return NULL;
+    pg_dir_t * dir = (pg_dir_t *) pm_mgr_alloc(1);
+    memset(dir, 0, sizeof(pg_dir_t));
+    return dir;
 }
 
-page_t * vm_alloc_page(pg_table_t * table, uint16 pt_index, phys_t address, uint16 flags)
+static inline page_t * get_page(pg_table_t * table, uint16 index)
 {
-    return NULL;
+    page_t * page = NULL;
+    if(table && PG_ALIGNED_4K(table))
+    {
+        page = &(table->pages[index]);
+    }
+    return page;
 }
 
-void vm_dealloc_page(pg_dir_t * dir, virt_t address)
+/**
+ * @brief Devuelve la referencia a una tabla del directorio
+ * 
+ * @param dir 
+ * @param index 
+ * @return pg_table_t* 
+ */
+static inline pg_table_t * get_table(pg_dir_t * dir, uint16 index)
 {
-    return NULL;
+    pg_table_t * table = NULL;
+    if(dir && PG_ALIGNED_4K(dir))
+    {
+        table = dir->tables[index];
+    }
+    return table;    
+}
+
+/**
+ * @brief Devuelve la pagina fisica de una dir. virtual
+ * 
+ * @param vaddr 
+ * @param directory 
+ * @return page_t 
+ */
+static inline page_t vm_get_phys_page(virt_t vaddr, pg_dir_t * dir)
+{
+    page_t phys_page = (page_t) NULL;
+    if(dir && PG_ALIGNED_4K(dir))
+    {
+        pg_table_t * table = get_table(dir, PG_PDE_IDX(vaddr));
+        if(table)
+        {
+            page_t * page = get_page(PG_PDE_GET_FRAME(table), PG_PTE_IDX(vaddr));
+            if(page)
+            {
+                phys_page = PG_PTE_GET_FRAME(page);
+            }
+        }
+    }
+    return phys_page;
+}
+
+/** 
+ * @brief Reserva una pagina y devuelve su dir fisica
+ * 
+ * @param flags 
+ * @return page_t 
+ */
+static page_t vm_create_page(uint16 flags)
+{
+    page_t page = pm_mgr_alloc(1);
+    assert(page);
+    page |= (flags & PG_ENTRY_FLAGS);
+    page |= PG_PTE_PRESENT;
+
+    return page;
+}
+
+/**
+ * @brief Asigna una página a su entrada en la tabla
+ * 
+ * @param table 
+ * @param index 
+ * @param flags 
+ * @return virt_t 
+ */
+virt_t vm_alloc_page(pg_dir_t * dir, uint16 flags)
+{
+    page_t new_page = vm_create_page(flags);
+
+    uint16 pde = PG_PDE_IDX(new_page);
+    uint16 pte = PG_PTE_IDX(new_page);
+
+    pg_table_t * table = get_table(dir, pde);
+    if(!table || !((uintptr_t)table & PG_PDE_PRESENT))
+    {
+        table = vm_new_table(1);
+        dir->tables[pde] = (uintptr_t)table | flags | PG_PDE_PRESENT;
+    }
+
+    page_t * page = get_page(PG_PDE_GET_FRAME(table), pte);
+    if(*page & PG_PTE_PRESENT)
+    {
+        pm_mgr_free(PG_PTE_GET_FRAME(new_page));
+        kinfo(WARNING, "Page is already present. Returning NULL\n");
+        return (virt_t)NULL;
+    }
+
+    *page = new_page;
+    
+    return PG_PTE_GET_FRAME(new_page);
+}
+
+/**
+ * @brief Libera una pagina de memoria fisica y la desasigna en la tabla
+ * 
+ * @param table 
+ * @param index 
+ */
+void vm_free_page(pg_table_t * table, uint16 index)
+{ 
+    if((uintptr_t)table & PG_PDE_PRESENT)
+    {
+        page_t * page = get_page(PG_PDE_GET_FRAME(table), index);
+        if((uintptr_t)page & PG_PTE_PRESENT)
+        {
+            pm_mgr_free(PG_PTE_GET_FRAME(*page));
+            *page = (page_t) NULL;
+        }
+    }
+}
+
+virt_t vm_map_page(pg_dir_t * dir, uint16 flags)
+{
+    virt_t vaddr = vm_alloc_page(dir, flags);
+    return vaddr;
 }
 
 void vm_unmap(pg_dir_t * dir, virt_t vaddr)
 {
-    return NULL;
+    pg_table_t * table = get_table(dir, PG_PDE_IDX(vaddr));
+    vm_free_page(table, PG_PTE_IDX(vaddr));
 }
 
-virt_t vm_map_area(pg_dir_t * dir, phys_t paddr_from, virt_t vaddr_from, phys_t paddr_to, virt_t vaddr_to, page_flags_t flags)
+void vm_init(pg_dir_t * kernel_dir)
 {
-    return NULL;
-}
-
-void vm_unmap_area(pg_dir_t * dir, virt_t vaddr_from, virt_t vaddr_to)
-{
-    return NULL;
-}
-
-virt_t vm_map(pg_dir_t * dir, phys_t paddr, virt_t vaddr, page_flags_t flags)
-{
-    uint16 pde = PG_PDE_IDX(vaddr);
-    uint16 pte = PG_PTE_IDX(vaddr);
-
-    pg_table_t * table = dir->tables[pde];
-    if((!table && PG_PTE_PRESENT))
+    if(kernel_directory == NULL)
     {
-        kinfo(ERROR, "Page Table not present. NOT IMPLEMENTED");
-        __stop();
+        assert(PG_ALIGNED_4K(kernel_dir));
+        kernel_directory = kernel_dir;
     }
-
-    //limpiar flags de la direccion
-    table = ((uintptr_t)table) & ((uintptr_t)PG_PDE_FRAME);
-
-    
-
-    table->pages[pte] = paddr & PG_PTE_FRAME | (flags & PG_ENTRY_FLAGS);
-
-    
-
-    //acceder a la posicion en PD
-    //si la tabla no esta presente
-        //crear tabla
-    //acceder a la posicion en PT
-    //paginar direccion fisica
-    //escribir flags 
-    
-    return vaddr & PG_PTE_FRAME;
 }
 
