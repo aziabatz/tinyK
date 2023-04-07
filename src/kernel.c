@@ -140,10 +140,31 @@ int _kmain(pg_dir_t *kdir,
 
     heap_t * kheap = init_kheap(kdir, (PG_PTE_READ_WRITE | PG_PTE_PRESENT));
 
-    for (size_t i = 0; i < 10; i++)
-    {
-        kprintf("reserved with malloc at %x\n", kmalloc(kheap, i * 2));
+    virt_t allocs[5];
+    for (size_t i = 0; i < 5; i++)
+    {  
+        
+        allocs[i] = kmalloc(kheap, i * 2);
+        if(allocs[i]){
+        heap_block_t * hp = (uintptr_t)(allocs[i])-sizeof(heap_block_t);
+        
+        kprintf("reserved with malloc at %x with:\n"
+        "base:%x length:%x\n", hp, hp->base, hp->length);
+        }
+        else{
+            kprintf("%s\n", "Error allocating");
+        }
     }
+
+    for (size_t i = 0; i < 5; i++)
+    {
+        if(kfree(kheap, allocs[i]))
+            kprintf("freed with kfree chunk at %x\n", allocs[i]);
+        else
+            kprintf("kfree thrown error freeing chunk at %x\n", allocs[i]);
+    }
+    
+
     
 
     __hold_on();

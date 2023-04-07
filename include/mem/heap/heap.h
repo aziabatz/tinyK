@@ -65,4 +65,6 @@ virt_t kmallocp(heap_t * heap, size_t size);
  */
 virt_t kmalloca(heap_t * heap, size_t size, virt_t address);
 
+bool kfree(heap_t * heap, virt_t address);
+
 #endif
