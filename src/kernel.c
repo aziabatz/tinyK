@@ -138,8 +138,13 @@ int _kmain(pg_dir_t *kdir,
         "Aprox. use: %u%%\n",
         total, free, total-free, 100*(total-free)/total); */
 
-    init_kheap(kdir, (PG_PTE_READ_WRITE | PG_PTE_PRESENT));
+    heap_t * kheap = init_kheap(kdir, (PG_PTE_READ_WRITE | PG_PTE_PRESENT));
 
+    for (size_t i = 0; i < 10; i++)
+    {
+        kprintf("reserved with malloc at %x\n", kmalloc(kheap, i * 2));
+    }
+    
 
     __hold_on();
 }

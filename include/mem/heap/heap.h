@@ -46,7 +46,7 @@ heap_t * init_kheap(pg_dir_t * dir, page_flags_t flags);
  *
  * @return Una dirección virtual que apunta al comienzo del bloque asignado, o NULL si la asignación falla.
  */
-virt_t kmalloc(size_t size);
+virt_t kmalloc(heap_t * heap, size_t size);
 
 /**
  * @brief Asigna un bloque de memoria del tamaño especificado desde el heap del kernel y asegura que la dirección esté alineada con una página.
@@ -54,7 +54,7 @@ virt_t kmalloc(size_t size);
  *
  * @return Una dirección virtual que apunta al comienzo del bloque asignado, o NULL si la asignación falla.
  */
-virt_t kmallocp(size_t size);
+virt_t kmallocp(heap_t * heap, size_t size);
 
 /**
  * @brief Asigna un bloque de memoria del tamaño especificado desde el heap del kernel y asegura que la dirección virtual sea la indicada
@@ -63,6 +63,6 @@ virt_t kmallocp(size_t size);
  *
  * @return El bloque asignado con la dirección virtual indicada, o NULL si la asignación falla.
  */
-virt_t kmalloca(size_t size, virt_t address);
+virt_t kmalloca(heap_t * heap, size_t size, virt_t address);
 
 #endif
