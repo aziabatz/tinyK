@@ -148,8 +148,8 @@ int _kmain(pg_dir_t *kdir,
         if(allocs[i]){
         heap_block_t * hp = (uintptr_t)(allocs[i])-sizeof(heap_block_t);
         
-        kprintf("reserved with malloc at %x with:\n"
-        "base:%x length:%x\n", hp, hp->base, hp->length);
+        kprintf("reserved with malloc at 0x%x with:\n"
+        "base:0x%x length:0x%x\n", hp, hp->base, hp->length);
         }
         else{
             kprintf("%s\n", "Error allocating");
@@ -159,9 +159,9 @@ int _kmain(pg_dir_t *kdir,
     for (size_t i = 0; i < 5; i++)
     {
         if(kfree(kheap, allocs[i]))
-            kprintf("freed with kfree chunk at %x\n", allocs[i]);
+            kprintf("freed with kfree chunk at 0x%x\n", allocs[i]);
         else
-            kprintf("kfree thrown error freeing chunk at %x\n", allocs[i]);
+            kprintf("kfree thrown error freeing chunk at 0x%x\n", allocs[i]);
     }
     
 

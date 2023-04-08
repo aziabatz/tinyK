@@ -17,7 +17,9 @@ heap_t * init_kheap(pg_dir_t * dir, page_flags_t flags)
     head_block->used = false;
     head_block->mark = HEAP_BLOCK_MARK;
     head_block->base = (uintptr_t)head_block + sizeof(heap_block_t);
-    head_block->length = ((uintptr_t)heap+0x1000) - head_block->base;//FIXME mal calculado
+    head_block->length = ((uintptr_t)heap+0x1000) - head_block->base;
+
+
 
     heap->head = head_block;
     
@@ -29,6 +31,7 @@ heap_t * init_kheap(pg_dir_t * dir, page_flags_t flags)
             heap,
             heap->head->base,
             heap->head->length);
+
     return heap;
 }
 
@@ -202,7 +205,7 @@ bool kfree(heap_t * heap, virt_t address)
     }
 
     assert(found->mark == HEAP_BLOCK_MARK);
-    kprintf("base: %x found+block: %x|| found: %x size: %x\n", found->base, found + sizeof(heap_block_t), found, sizeof(heap_block_t));
+    kprintf("base: 0%x found+block: 0x%x|| found: 0%x size: %xh\n", found->base, found + sizeof(heap_block_t), found, sizeof(heap_block_t));
     virt_t base = found->base;
     virt_t block_base_offset = found;
     block_base_offset += sizeof(heap_block_t);
