@@ -64,11 +64,4 @@ void install_irq();
  */
 void irq_init();
 
-//FIXME should only be visible by asm file
-/**
- * \brief Manejador de interrupción hardware común. Obtiene el número de interrupción y envía los registros recibidos al manejador específico correspondiente
- * \param regs Marco de registros de la CPU en el instante de la interrupción
- */
-void irq_handler(reg_frame_t * regs);
-
 #endif

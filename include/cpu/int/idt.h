@@ -115,11 +115,4 @@ void idt_set_gate(uint32 entry, uint32 offset, uint16 selector, uint8 flags);
  */
 void idt_set_handler(uint32 entry, uint32 handler);
 
-/**
- * \brief Manejador último común a todos las interrupciones
- * 
- * \param regs Marco de registros del procesador en el instante de la interrupción
- */
-void isr_handler(reg_frame_t * regs);
-
 #endif
