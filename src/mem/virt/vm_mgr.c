@@ -159,7 +159,7 @@ virt_t vm_alloc_page(pg_dir_t * dir, uint16 flags)
     pg_table_t * table = get_table(dir, pde);
     if(!table || !((uintptr_t)table & PG_PDE_PRESENT))
     {
-        table = vm_new_table(1);
+        table = vm_new_table();
         dir->tables[pde] = (uintptr_t)table | flags | PG_PDE_PRESENT;
     }
 
