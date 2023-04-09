@@ -107,10 +107,12 @@ int _kmain(pg_dir_t *kdir,
 
     idt_init();
     kinfo(INFO, "IDT Loaded");
+    pg_set_handler();
+    kinfo(INFO, "Page Fault handler set");
 
     timer_init();
 
-    pg_set_handler();
+    
     pm_mgr_init(NULL, multiboot->mem_lower + multiboot->mem_upper, kdir);
 
     size_t total, free;

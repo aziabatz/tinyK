@@ -45,6 +45,7 @@
 extern void __load_pd(pg_dir_t * dir);
 extern void __refresh_tlb();
 extern void __drop_page(virt_t vaddr);
+extern pg_dir_t * __get_current_dir();
 
 void vm_unmap(pg_dir_t * dir, virt_t vaddr);
 virt_t vm_map_page(pg_dir_t * dir, uint16 flags);
