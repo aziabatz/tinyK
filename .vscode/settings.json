@@ -5,6 +5,9 @@
         "multiboot.h": "c",
         "stddef.h": "c",
         "printf.h": "c",
-        "mem.h": "c"
+        "mem.h": "c",
+        "assert.h": "c",
+        "system.h": "c",
+        "vm_mgr.h": "c"
     }
 }
