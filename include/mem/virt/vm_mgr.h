@@ -1,6 +1,6 @@
 /**
- * \file pm_mgr.h
- * \date Friday, January 27th 2023, 5:12:12 pm
+ * \file vm_mgr.h
+ * \date Wednesday, February 1st 2023, 5:06:24 pm
  * \author Ahmed Ziabat Ziabat
  * 
  * 
@@ -35,48 +35,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  * 
- * \brief Fichero cabecera para el manejador de memoria fisica
+ * \brief Fichero de cabecera para manejador de memoria virtual
  */
 
-
-#ifndef TK_PHYS_MGR_H
-#define TK_PHYS_MGR_H
-
-#include <types.h>
-#include <boot/multiboot.h>
+#include "../types.h"
+#include "paging.h"
 #include <stddef.h>
-#include "../virt/paging.h"
 
-// \brief Tamaño mínimo de bloque en bytes(una pagina por defecto)
-#define BLOCK_SIZE 4096
+extern void __load_pd(pg_dir_t * dir);
+extern void __refresh_tlb();
+extern void __drop_page(virt_t vaddr);
+extern pg_dir_t * __get_current_dir();
 
-// \brief Número de bloques por cada byte del bitmap (cada bit direcciona toda una página de 4K)
-#define BLOCKS_PER_BYTE 8
-
-#define BLOCKS_ALL_USED 0xFF
-#define BLOCKS_NONE_USED 0x00
-
-#define BLOCK_FREE 0
-#define BLOCK_USED 1
-
-struct pm_mgr_info
-{
-    size_t bitmap_length;
-    size_t free_blocks;
-    uint8 * bitmap;
-};
-
-typedef struct pm_mgr_info pm_mgr_t;
-
-void * pm_mgr_init(multiboot_memory_map_t * mb_map, size_t memory_size, pg_dir_t * dir);
-
-void pm_mgr_get_status(size_t * total, size_t * free);
-
-void pm_mgr_free(phys_t address);
-
-phys_t pm_mgr_nalloc(phys_t address, size_t pages);
-
-phys_t pm_mgr_alloc(size_t pages);
-
-
-#endif
+void vm_unmap(pg_dir_t * dir, virt_t vaddr);
+virt_t vm_map_page(pg_dir_t * dir, uint16 flags);
+void vm_init(pg_dir_t * kernel_dir);

@@ -85,3 +85,14 @@ void mboot_show_mmap()
         //kprintf("%s\n", MEM_TABLE_SEPARATOR);
     }
 }
+
+//FIXME QUE OCURRE CON DIRECCIONES +4GB?
+multiboot_memory_map_t * mboot_get_mmap_entry(uint32 entry)
+{
+    multiboot_memory_map_t * map = mboot_mmap_addr + (entry * sizeof(multiboot_memory_map_t));
+    if(map>(mboot_mmap_addr + mboot_mmap_len))
+        map = NULL;
+
+    return map;
+}
+

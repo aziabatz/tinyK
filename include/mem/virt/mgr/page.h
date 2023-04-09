@@ -1,6 +1,6 @@
 /**
- * \file pm_mgr.h
- * \date Friday, January 27th 2023, 5:12:12 pm
+ * \file page.h
+ * \date Monday, April 3rd 2023, 5:05:30 pm
  * \author Ahmed Ziabat Ziabat
  * 
  * 
@@ -35,48 +35,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  * 
- * \brief Fichero cabecera para el manejador de memoria fisica
+ * \brief 
  */
 
-
-#ifndef TK_PHYS_MGR_H
-#define TK_PHYS_MGR_H
-
-#include <types.h>
-#include <boot/multiboot.h>
+#include "../paging.h"
 #include <stddef.h>
-#include "../virt/paging.h"
 
-// \brief Tamaño mínimo de bloque en bytes(una pagina por defecto)
-#define BLOCK_SIZE 4096
-
-// \brief Número de bloques por cada byte del bitmap (cada bit direcciona toda una página de 4K)
-#define BLOCKS_PER_BYTE 8
-
-#define BLOCKS_ALL_USED 0xFF
-#define BLOCKS_NONE_USED 0x00
-
-#define BLOCK_FREE 0
-#define BLOCK_USED 1
-
-struct pm_mgr_info
-{
-    size_t bitmap_length;
-    size_t free_blocks;
-    uint8 * bitmap;
-};
-
-typedef struct pm_mgr_info pm_mgr_t;
-
-void * pm_mgr_init(multiboot_memory_map_t * mb_map, size_t memory_size, pg_dir_t * dir);
-
-void pm_mgr_get_status(size_t * total, size_t * free);
-
-void pm_mgr_free(phys_t address);
-
-phys_t pm_mgr_nalloc(phys_t address, size_t pages);
-
-phys_t pm_mgr_alloc(size_t pages);
-
-
+#ifndef TK_GUARD_VM_MGR_ONLY
+    #error THIS FILE IS ONLY MEANT TO BE INCLUDED BY THE VM MANAGER (vm_mgr.c)
 #endif
+
+/**
+ * @brief Create a page in a table
+ * 
+ * @param table Paging table
+ * @param pt_index Index of table entry
+ * @param flags Page flags
+ * @return page_t* The reference to the table entry
+ */
+virt_t vm_alloc_page(pg_dir_t * dir, uint16 flags);
+
+/**
+ * @brief Removes a page from a table
+ * 
+ * @param dir The current directory
+ * @param address The page virtual address
+ */
+void vm_dealloc_page(pg_dir_t * dir, virt_t address);

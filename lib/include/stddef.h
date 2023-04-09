@@ -3,6 +3,7 @@
 
 typedef __SIZE_TYPE__ size_t;
 typedef signed int ptrdiff_t;
+typedef __UINTPTR_TYPE__ uintptr_t;
 
 
 #ifndef NULL

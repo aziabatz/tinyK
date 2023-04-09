@@ -43,6 +43,9 @@
 .global __clear_pg
 .global __load_pd
 .global __pf_addr
+.global __drop_page
+.global __refresh_tlb
+.global __get_current_dir
 
 __set_pg:
     push %eax
@@ -60,9 +63,24 @@ __clear_pg:
     pop %eax
 ret
 
+__refresh_tlb:
+	movl %cr3,%eax
+	movl %eax,%cr3
+ret
+
+__drop_page:
+    cli
+    invlpg 4(%esp)
+    sti
+ret
+
 __load_pd:
-    mov 4(%esp), %eax
-    mov %eax, %cr3
+    mov 4(%esp), %ebx
+    mov %ebx, %cr3
+ret
+
+__get_current_dir:
+    mov %cr3, %eax
 ret
 
 __pf_addr:
