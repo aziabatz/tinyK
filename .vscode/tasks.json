@@ -20,7 +20,7 @@
         {
             "label": "Parar QEMU",
             "type": "shell",
-            "command": "pkill qemu-system-*"
+            "command": "pkill qemu-system-\\*"
         }
 
     ],
