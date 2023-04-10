@@ -7,6 +7,14 @@
 #define KERNEL_DS 0x10
 #define MAX_GDT_ENTRIES 10
 
+
+#define GDT_NULL_ENTRY 1
+#define GDT_KERNEL_CS_ENTRY 1
+#define GDT_KERNEL_DS_ENTRY 2
+#define GDT_TSS_ENTRY 3
+#define GDT_USER_CS_ENTRY 4
+#define GDT_USER_DS_ENTRY 5
+
 //access
 #define GDT_P (1 << 7)
 #define GDT_DPL(dpl) (dpl << 5)
@@ -36,5 +44,7 @@ typedef struct gdt_seg_desc gdt_entry_t;
 typedef descriptor_t gdt_t;
 
 void gdt_init();
+
+void install_tss (uint32 entry, uint16 ss, uint32 esp);
 
 #endif

@@ -36,7 +36,8 @@ mboot:
 __start:
     cli
     mov $_kernel_stack, %esp
-    push $STACK_SIZE // kernel stack addr esp+12
+    push $STACK_SIZE
+    push $_kernel_stack // kernel stack addr esp+12
     push %eax //Magic Number pointer esp+8
     push %ebx // Multiboot structure pointer esp+4
     mov $_boot_pd, %ebx

@@ -80,7 +80,8 @@ void charmap()
 int _kmain(pg_dir_t *kdir,
            multiboot_info_t *multiboot,
            uint32 magicnum,
-           uint32 stack)
+           size_t stack_size,
+           void * stack)
 {
     driver_t *vga = install_vga();
     set_tty_dev(vga);
@@ -166,9 +167,13 @@ int _kmain(pg_dir_t *kdir,
             kprintf("kfree thrown error freeing chunk at 0x%x\n", allocs[i]);
     }
     
+    pg_dir_t * old_dir = kdir;
     kdir = vm_clone_dir(kdir);
 
-    kprintf("cloned dir");
+    kprintf("Cloned directory, new 0x%x from 0x%x\n", old_dir, kdir);
+
+    install_tss(GDT_TSS_ENTRY, KERNEL_DS, stack);
+    kinfo(INFO, "TSS was set up in %TR register");
 
     __hold_on();
 }
