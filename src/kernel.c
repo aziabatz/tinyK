@@ -166,8 +166,9 @@ int _kmain(pg_dir_t *kdir,
             kprintf("kfree thrown error freeing chunk at 0x%x\n", allocs[i]);
     }
     
+    kdir = vm_clone_dir(kdir);
 
-    
+    kprintf("cloned dir");
 
     __hold_on();
 }
