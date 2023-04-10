@@ -16,7 +16,7 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag osdev:$(date +%s)
+      run: docker build . --file Dockerfile --tag osdev
 
     - name: Clean all
       run: docker run osdev make clean-all
