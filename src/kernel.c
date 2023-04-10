@@ -168,12 +168,14 @@ int _kmain(pg_dir_t *kdir,
     }
     
     pg_dir_t * old_dir = kdir;
-    kdir = vm_clone_dir(kdir);
+    //kdir = vm_clone_dir(kdir);
 
     kprintf("Cloned directory, new 0x%x from 0x%x\n", old_dir, kdir);
 
     install_tss(GDT_TSS_ENTRY, KERNEL_DS, stack);
     kinfo(INFO, "TSS was set up in %TR register");
+
+    __jump_user();
 
     __hold_on();
 }

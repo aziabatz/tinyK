@@ -32,6 +32,10 @@ void gdt_init()
     gdt_set_gate(GDT_KERNEL_CS_ENTRY, 0xFFFFFFFF, 0x0, (GDT_P|GDT_S|GDT_EX|GDT_DC), (GDT_G|GDT_DB));
     //kernel data segment
     gdt_set_gate(GDT_KERNEL_DS_ENTRY, 0xFFFFFFFF, 0x0, (GDT_P|GDT_S|GDT_RW), (GDT_G|GDT_DB));
+    //user code segment
+    gdt_set_gate(GDT_USER_CS_ENTRY, 0xFFFFFFFF, 0x0, (GDT_P|GDT_DPL(3)|GDT_S|GDT_EX|GDT_RW), (GDT_G|GDT_DB));
+    //user data segment
+    gdt_set_gate(GDT_USER_DS_ENTRY, 0xFFFFFFFF, 0x0, (GDT_P|GDT_DPL(3)|GDT_S|GDT_RW), (GDT_G|GDT_DB));
 
     gdt.base = (uint32) &gdt_entries;
     gdt.limit = (sizeof(gdt_entry_t)*MAX_GDT_ENTRIES)-1;
@@ -59,5 +63,4 @@ void install_tss (uint32 entry, uint16 ss, uint32 esp)
 	kernel_tss.gs = KERNEL_DS;
 
     __flush_tss(entry * sizeof(gdt_entry_t));
-
 }

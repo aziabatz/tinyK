@@ -240,7 +240,7 @@ void * pm_mgr_init(multiboot_memory_map_t *mb_map, size_t memory_size, pg_dir_t 
 
     for (size_t pg = 0; pg < bitmap_paging_size; pg++)
     {
-        page_flags_t flags = PG_PTE_PRESENT | PG_PTE_READ_WRITE;
+        page_flags_t flags = PG_PTE_PRESENT | PG_PTE_READ_WRITE| PG_PTE_USER_KERNEL;
         //vm_map_page(dir, flags);
         map_to_dir(dir, pm_manager.bitmap+(0x1000*pg), pm_manager.bitmap+(0x1000*pg), flags);
     }

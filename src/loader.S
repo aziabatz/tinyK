@@ -66,7 +66,7 @@ __boot_idpag:
 
     idpag:
         andl $0xFFFFF000, %eax // discard bits for alignment
-        orl $0x3, %eax //Add present and rw flags
+        orl $0x7, %eax //Add present and rw flags
 
 
         movl %eax, (%ebx)
@@ -82,7 +82,7 @@ __boot_idpag:
     //we have set the pt entries
     //now we must set the pd entry pointing to pt
     movl $_boot_pt, %eax
-    orl $0x3, %eax 
+    orl $0x7, %eax 
     movl $_boot_pd, %ebx
     movl %eax, (%ebx)
 

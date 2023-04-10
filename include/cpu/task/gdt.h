@@ -8,12 +8,12 @@
 #define MAX_GDT_ENTRIES 10
 
 
-#define GDT_NULL_ENTRY 1
+#define GDT_NULL_ENTRY 0
 #define GDT_KERNEL_CS_ENTRY 1
 #define GDT_KERNEL_DS_ENTRY 2
-#define GDT_TSS_ENTRY 3
-#define GDT_USER_CS_ENTRY 4
-#define GDT_USER_DS_ENTRY 5
+#define GDT_USER_CS_ENTRY 3
+#define GDT_USER_DS_ENTRY 4
+#define GDT_TSS_ENTRY 5
 
 //access
 #define GDT_P (1 << 7)
