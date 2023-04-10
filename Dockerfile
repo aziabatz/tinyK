@@ -42,8 +42,8 @@ RUN wget http://ftp.gnu.org/gnu/gcc/gcc-12.2.0/gcc-12.2.0.tar.gz \
     && mkdir build-gcc \
     && cd build-gcc \
     && ../gcc-12.2.0/configure --prefix=${toolchain} --target=i686-elf --disable-nls --enable-languages=c,c++ --without-headers --disable-werror\
-    && make all-gcc\
-    && make all-target-libgcc\
+    && make -j8 all-gcc\
+    && make -j8 all-target-libgcc\
     && make install-gcc\
     && make install-target-libgcc \
     && cd .. \
