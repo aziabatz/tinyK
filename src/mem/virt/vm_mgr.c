@@ -59,20 +59,28 @@ static pg_dir_t * kernel_directory = NULL;
 
 extern pg_dir_t * __get_current_dir();
 
-static inline pg_table_t * vm_new_table()
+static inline pg_table_t * vm_new_table(pg_dir_t * dir, page_flags_t flags)
 {
-    pg_table_t * table = (pg_table_t*) pm_mgr_alloc(1);
+    pg_table_t * table = (pg_table_t*) vm_alloc_page(dir, flags);
     memset(table, 0, sizeof(pg_table_t));
     return table;
 }
 
-static inline pg_dir_t * vm_new_dir()
+static inline pg_dir_t * vm_new_dir(pg_dir_t * src_dir, page_flags_t flags)
 {
-    pg_dir_t * dir = (pg_dir_t *) pm_mgr_alloc(1);
+    pg_dir_t * dir = (pg_dir_t *) vm_alloc_page(src_dir, flags);
     memset(dir, 0, sizeof(pg_dir_t));
     return dir;
 }
 
+/**
+ * @brief Devuelve la referencia a una pagina de la tabla.
+ * SIN LIMPIAR BANDERAS
+ * 
+ * @param table 
+ * @param index 
+ * @return page_t* 
+ */
 static inline page_t * get_page(pg_table_t * table, uint16 index)
 {
     page_t * page = NULL;
@@ -84,7 +92,8 @@ static inline page_t * get_page(pg_table_t * table, uint16 index)
 }
 
 /**
- * @brief Devuelve la referencia a una tabla del directorio
+ * @brief Devuelve la referencia a una tabla del directorio.
+ * SIN LIMPIAR BANDERAS
  * 
  * @param dir 
  * @param index 
@@ -157,19 +166,29 @@ virt_t vm_alloc_page(pg_dir_t * dir, uint16 flags)
     uint16 pte = PG_PTE_IDX(new_page);
 
     pg_table_t * table = get_table(dir, pde);
-    if(!table || !((uintptr_t)table & PG_PDE_PRESENT))
+
+    if( !((uintptr_t)table & PG_PDE_PRESENT) ||
+        (pde != PG_MAX_PDE) && (pte == PG_MAX_PTE - 1) )
     {
-        table = vm_new_table();
-        dir->tables[pde] = (uintptr_t)table | flags | PG_PDE_PRESENT;
+        // Estamos en la ultima entrada
+        // La ultima entrada sera la tabla siguiente(mapeada)
+        // Creamos la tabla
+
+        // Aqui tenemos la tabla
+        dir->tables[pde] = (uintptr_t)new_page | flags | PG_PDE_PRESENT;
+        table = PG_PDE_GET_FRAME(dir->tables[pde]);
+        new_page = vm_create_page(flags);
     }
 
+    //Aqui ya tenemos la pagina
     page_t * page = get_page(PG_PDE_GET_FRAME(table), pte);
-    if(*page & PG_PTE_PRESENT)
+    if(page && *page)
     {
-        pm_mgr_free(PG_PTE_GET_FRAME(new_page));
-        kinfo(WARNING, "Page is already present. Returning NULL\n");
-        return (virt_t)NULL;
+        pm_mgr_free(PG_PTE_GET_FRAME(*page));
+        kinfo(WARNING, "Page is already present and in use. Returning NULL");
+        return NULL;
     }
+    //dir->tables[pde]->pages[pte] = new_page; 
 
     *page = new_page;
     
@@ -195,6 +214,8 @@ void vm_free_page(pg_table_t * table, uint16 index)
     }
 }
 
+//-----------------------------------------------------------------------
+
 virt_t vm_map_page(pg_dir_t * dir, uint16 flags)
 {
     virt_t vaddr = vm_alloc_page(dir, flags);
@@ -205,6 +226,23 @@ void vm_unmap(pg_dir_t * dir, virt_t vaddr)
 {
     pg_table_t * table = get_table(dir, PG_PDE_IDX(vaddr));
     vm_free_page(table, PG_PTE_IDX(vaddr));
+}
+
+pg_dir_t * vm_clone_dir(pg_dir_t * dir)
+{
+    
+    // Creamos un nuevo directorio de páginas
+    pg_dir_t * new_dir = vm_new_dir(dir, (PG_PDE_READ_WRITE | PG_PDE_PRESENT));
+
+    for(uint16 pde = 0; pde < PG_MAX_PDE; pde++)
+    {
+        pg_table_t * table = dir->tables[pde];
+        //Comprobamos que no es nulo y que está presente
+        if((uintptr_t)table & PG_PDE_PRESENT)
+        {
+            new_dir->tables[pde] = table;
+        }
+    }
 }
 
 void vm_init(pg_dir_t * kernel_dir)

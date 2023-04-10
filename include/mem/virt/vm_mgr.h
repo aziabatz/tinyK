@@ -49,4 +49,5 @@ extern pg_dir_t * __get_current_dir();
 
 void vm_unmap(pg_dir_t * dir, virt_t vaddr);
 virt_t vm_map_page(pg_dir_t * dir, uint16 flags);
+pg_dir_t * vm_clone_dir(pg_dir_t * dir);
 void vm_init(pg_dir_t * kernel_dir);

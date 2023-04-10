@@ -8,6 +8,7 @@
         "mem.h": "c",
         "assert.h": "c",
         "system.h": "c",
-        "vm_mgr.h": "c"
+        "vm_mgr.h": "c",
+        "__locale": "c"
     }
 }

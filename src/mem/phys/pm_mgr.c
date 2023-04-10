@@ -91,6 +91,7 @@ static inline bool status_block(uint32 block)
 void pm_mgr_free(phys_t address)
 {
     // Si la direccion no esta alineada, ERROR y ALINEAR?
+    kprintf("%x", address);
     assert(PG_ALIGNED_4K(address));
     free_block(address/BLOCK_SIZE);
 }
@@ -186,6 +187,7 @@ static inline virt_t map_to_dir(pg_dir_t * dir, phys_t paddr, virt_t vaddr, page
     if((!table && PG_PTE_PRESENT))
     {
         kinfo(ERROR, "Page Table not present. NOT IMPLEMENTED");
+        kprintf("virt: 0x%x\n", vaddr);
         /*FIXME implementar:
             - bitmap maximo ocupa 128 kb
             - Añadir el tamaño maximo de bitmap calculado
