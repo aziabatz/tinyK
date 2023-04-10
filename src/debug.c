@@ -43,6 +43,7 @@ void set_fg(uint8 fg);
 
 void kinfo(int level, char * str)
 {
+    uint8 color = get_color();
     kprint("[ ");
     
     switch(level)
@@ -60,7 +61,9 @@ void kinfo(int level, char * str)
             kprint("ERR ");
             break;
     }
-    set_fg(0xF);
+    
+    set_color(color);
+
     kprint(" ]");
 
 

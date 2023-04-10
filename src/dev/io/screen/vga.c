@@ -7,18 +7,28 @@
 //screen related
 
 static uint16 x = 0, y = 0;
-static uint8 color = WHITE;
+static uint8 color = BLUE<<4 | WHITE;
 
 static vga_spec_t vga_spec = {80,25,2,FRAMEBUFFER};
 
 void set_fg(uint8 fg)
 {
-    color = fg & 0xF;
+    color = (color & 0xF0) | fg & 0xF;
 }
 
 void set_bg(uint8 bg)
 {
-    color = (bg << 4) | color;
+    color = ((bg << 4) & 0xF0) | (color & 0xF);
+}
+
+uint8 get_color()
+{
+    return color;
+}
+
+void set_color(uint8 new_color)
+{
+    color = new_color;
 }
 
 static inline void clear_line(uint32 line)

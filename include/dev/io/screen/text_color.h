@@ -62,5 +62,8 @@
 void set_bg(uint8 bg);
 void set_fg(uint8 fg);
 
+uint8 get_color();
+void set_color(uint8 new_color);
+
 
 #endif
