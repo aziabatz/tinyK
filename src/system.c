@@ -81,7 +81,7 @@ void kpanic_reg_dump(reg_frame_t * regs)
     kprintf("CPU FRAME - REGISTERS DUMP\n"PANIC_MSG,
     regs->eax, regs->ebx, regs->ecx, 
     regs->edx, regs->edi, regs->esi,
-    regs->esp, regs->ebp, regs->ss,
+    regs->useresp, regs->esp, regs->ebp, regs->ss,
     regs->eip, regs->cs,
     regs->gs,regs->fs, regs->es, regs->ds,
     regs->eflags);
