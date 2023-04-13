@@ -103,11 +103,13 @@ int _kmain(pg_dir_t *kdir,
     gdt_init();
     kinfo(INFO, "GDT Loaded");
 
-    irq_init();
-    kinfo(INFO, "IRQ is set");
+    
 
     idt_init();
     kinfo(INFO, "IDT Loaded");
+    irq_init();
+    kinfo(INFO, "IRQ is set");
+
     pg_set_handler();
     kinfo(INFO, "Page Fault handler set");
 
@@ -172,7 +174,8 @@ int _kmain(pg_dir_t *kdir,
 
     kprintf("Cloned directory, new 0x%x from 0x%x\n", old_dir, kdir);
 
-    install_tss(GDT_TSS_ENTRY, KERNEL_DS, stack);
+    uint8 new_stack[2048];
+    update_tss_stack(new_stack+2048);
     kinfo(INFO, "TSS was set up in %TR register");
 
     __jump_user();

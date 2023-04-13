@@ -29,7 +29,7 @@ void gdt_init()
     //null entry
     gdt_set_gate(GDT_NULL_ENTRY,0,0,0,0);
     //kernel code segment
-    gdt_set_gate(GDT_KERNEL_CS_ENTRY, 0xFFFFFFFF, 0x0, (GDT_P|GDT_S|GDT_EX|GDT_DC), (GDT_G|GDT_DB));
+    gdt_set_gate(GDT_KERNEL_CS_ENTRY, 0xFFFFFFFF, 0x0, (GDT_P|GDT_S|GDT_EX), (GDT_G|GDT_DB));
     //kernel data segment
     gdt_set_gate(GDT_KERNEL_DS_ENTRY, 0xFFFFFFFF, 0x0, (GDT_P|GDT_S|GDT_RW), (GDT_G|GDT_DB));
     //user code segment
@@ -40,27 +40,35 @@ void gdt_init()
     gdt.base = (uint32) &gdt_entries;
     gdt.limit = (sizeof(gdt_entry_t)*MAX_GDT_ENTRIES)-1;
 
+    install_tss(GDT_TSS_ENTRY, KERNEL_DS, 0x00);
+    
+
     __install_gdt(&gdt);
+    __flush_tss(GDT_TSS_ENTRY * sizeof(gdt_entry_t));
+}
+
+void update_tss_stack(uint32 kernel_esp)
+{
+    kernel_tss.esp0 = kernel_esp;
 }
 
 void install_tss (uint32 entry, uint16 ss, uint32 esp)
 {
     uint32 base = (uint32) &kernel_tss;
-    //I86_GDT_DESC_ACCESS|I86_GDT_DESC_EXEC_CODE|I86_GDT_DESC_DPL|I86_GDT_DESC_MEMORY,0);
+
     gdt_set_gate(entry, base + sizeof(tss_t), base, 
-    (GDT_A | GDT_EX | GDT_P | GDT_DPL(3)), 0);
+    (GDT_P | GDT_DPL(3) | TSS_32B_AVAIL), 0);
 
     memset(&kernel_tss, 0, sizeof(tss_t));
 
     kernel_tss.ss0 = ss;
     kernel_tss.esp0 = esp;
 
-    kernel_tss.cs=KERNEL_CS;
-	kernel_tss.ss = KERNEL_DS;
-	kernel_tss.es = KERNEL_DS;
-	kernel_tss.ds = KERNEL_DS;
-	kernel_tss.fs = KERNEL_DS;
-	kernel_tss.gs = KERNEL_DS;
+    kernel_tss.cs = KERNEL_CS | 0x3;
+    kernel_tss.ss = KERNEL_DS | 0x3;
+    kernel_tss.es = KERNEL_DS | 0x3;
+    kernel_tss.ds = KERNEL_DS | 0x3;
+    kernel_tss.fs = KERNEL_DS | 0x3;
+    kernel_tss.gs = KERNEL_DS | 0x3;
 
-    __flush_tss(entry * sizeof(gdt_entry_t));
 }

@@ -7,7 +7,7 @@
 .section .data
 
 _user_stack_bottom:
-.space 1024
+.space 1024, 0
 _user_stack:
 
 fmt: .asciz "%s\n"
@@ -24,9 +24,16 @@ __jump_user:
     movw %ax, %fs
     movw %ax, %gs
 
-    pushl %eax // SS ESP EFLAGS CS EIP
-    pushl $_user_stack
+    mov $_user_stack, %eax
+
+    pushl $0x23 // SS ESP EFLAGS CS EIP
+    pushl %eax
+
     pushfl
+    pop %eax
+    or $0x200, %eax
+    push %eax
+
     pushl $0x1b
     push $user_entry
     
@@ -35,16 +42,19 @@ iret
 
     
 user_entry:
-    addl $4, %esp
         
-        mov $fmt, %ebx
-        pushl %ebx
-        mov $hola, %ebx
-        pushl %ebx
-        call kprintf
+    mov $fmt, %ebx
+    pushl %ebx
+    mov $hola, %ebx
+    pushl %ebx
+    call kprintf
 
-        add $8, %esp
+    add $8, %esp
+
     w:
+    nop
+    nop
+    nop
     jmp w
 
 

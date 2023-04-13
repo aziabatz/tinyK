@@ -7,6 +7,8 @@
 
 #include <types.h>
 
+#define TSS_32B_AVAIL 0x9
+
 struct tss
 {
     uint16 prev;
@@ -67,5 +69,7 @@ struct tss
 typedef struct tss tss_t;
 
 extern void __flush_tss(uint16 selector);
+
+void update_tss_stack(uint32);
 
 #endif

@@ -43,7 +43,7 @@
 .macro _int_ num
 .global _int_\num
 _int_\num:
-    cli
+    xchg %bx, %bx
     pushl $0//dummy err-code
     pushl $\num
     jmp _int_common
@@ -52,7 +52,7 @@ _int_\num:
 .macro _inte_ num
 .global _inte_\num
 _inte_\num:
-    cli
+    xchg %bx, %bx
     pushl $\num
     jmp _int_common
 .endm
