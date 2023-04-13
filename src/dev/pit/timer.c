@@ -42,6 +42,7 @@ volatile uint64 ticks;
 void fire_tick(reg_frame_t * regs)
 {
     ticks++;
+    kprintf("PIT %d\n", ticks);
 }
 
 void timer_init()
