@@ -11,6 +11,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    container: rustembedded/osdev-utils:2021.12
 
     steps:
     - uses: actions/checkout@v3
@@ -24,11 +25,8 @@ jobs:
           ${{ runner.os }}-docker-
           ${{ runner.os }}-
 
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag osdev
-
     - name: Clean all
-      run: docker run osdev make clean-all
-
-    - name: Make the binaries and the ISO image
-      run: docker run osdev make iso
+      run: make clean-all
+      
+    - name: Compile binary
+      run: make bin
