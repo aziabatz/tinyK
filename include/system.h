@@ -39,7 +39,7 @@
 #include <cpu/regs.h>
 
 #define PANIC_MSG "%%EAX: %x  %%EBX: %x  %%ECX: %x\n%%EDX: %x  %%ESI: %x  %%EDI: %x\n"\
-"%%ESP: %x  %%EBP: %x  %%SS: %x\n"\
+"%%ESP: %x (actual: %x)  %%EBP: %x  %%SS: %x\n"\
 "%%EIP: %x  %%CS: %x\n"\
 "%%GS: %x  %%FS: %x  %%ES: %x  %%DS: %x\n"\
 "%%EFLAGS: %x\n"

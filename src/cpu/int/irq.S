@@ -38,12 +38,18 @@
 
 .set HW_OFFSET, 0x20
 
+.section .data
+before: .asciz "\nBEFORE::: "
+after:  .asciz "\nAFTER:::: "
+
+new_esp: .long 0
+
 .section .text
 
 .macro _irq_ num
 .global _irq_\num
 _irq_\num:
-    cli
+    xchgw %bx, %bx
     pushl $\num
     pushl $\num+HW_OFFSET
     jmp _irq_common
@@ -66,16 +72,48 @@ _irq_common:
     cld
 
     push %esp
+
+    // mov $before, %ebx
+    // push %ebx
+    // call kprintf
+    // add $4, %esp
+
+    // call kpanic_reg_dump
+
     call irq_handler
 
+    //xchgw %bx, %bx
+
+    // mov $after, %ebx
+    // push %ebx
+    // call kprintf
+    // add $4, %esp
+
+    // call kpanic_reg_dump
+    
     addl $4, %esp
+
+    // mov %esp, %eax
+    // addl $12, %eax
+    // mov (%eax), %eax //Aqui la direccion de ESP antes del pushal
+    // mov %eax, new_esp
+    
+
+    //pop %esp
 
     popl %gs
     popl %fs
     popl %es
     popl %ds
 
+    
+    
+    //addl %esp, %eax
+    
+    
+
     popal
+    //mov new_esp, %esp
 
     addl $8,%esp
 

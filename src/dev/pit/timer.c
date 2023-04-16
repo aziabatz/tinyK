@@ -36,12 +36,26 @@
 #include <dev/pit/timer.h>
 #include <cpu/int/irq.h>
 #include <printf.h>
+#include <cpu/task/scheduler.h>
+#include <assert.h>
 
-volatile uint64 ticks;
+volatile uint32 ticks;
+volatile uint32 sched_ticks;
 
 void fire_tick(reg_frame_t * regs)
 {
     ticks++;
+    if(!sched_ticks)
+        return;
+    if(ticks % sched_ticks == 0)
+    {
+        pick_next(regs);
+    }
+}
+
+void set_sched_ticks(uint32 ticks)
+{
+    sched_ticks = ticks;
 }
 
 void timer_init()

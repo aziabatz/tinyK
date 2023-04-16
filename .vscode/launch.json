@@ -12,6 +12,25 @@
             "preLaunchTask": "Lanzar QEMU",
             "postDebugTask": "Parar QEMU",
             "showDevDebugOutput": true   
+        },
+        {
+            "type": "cppdbg",
+            "request": "launch",
+            "name": "Debuguear con GDB",
+            "miDebuggerPath": "/usr/local/bin/gdb",
+            // "miDebuggerArgs": "-ex 'set arch riscv:rv64'",
+            "program": "${workspaceRoot}/tinykernel.bin",
+            "miDebuggerServerAddress": "localhost:1234",
+            "cwd": "${workspaceRoot}",
+            "preLaunchTask": "Lanzar QEMU",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "postDebugTask": "Parar QEMU"
         }
     ]
 }

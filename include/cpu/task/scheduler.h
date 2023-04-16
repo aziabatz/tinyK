@@ -5,12 +5,12 @@
 #include <cpu/regs.h>
 #include "process.h"
 
-void init_sched(uint32 quantum);
+void init_sched(uint32 quantum, heap_t * heap);
 
-void pick_next(proc_t * current);
+void pick_next(reg_frame_t * regs);
 
-uint8 kill_process(proc_t * current);
+uint8 kill_process(uint32 pid);
 
-uint8 add_process(proc_t * current);
+uint8 add_process(proc_t * new, char * new_alias);
 
 #endif

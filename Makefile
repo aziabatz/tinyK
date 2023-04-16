@@ -9,7 +9,7 @@ LINKER = $(ARCH)-ld
 GRUB = grub
 MKISO = $(GRUB)-mkrescue
 
-CFLAGS = -m32 -g $(foreach dir,$(INCLUDES),-I$(dir)) -nostdlib -fno-builtin -fno-exceptions -fno-leading-underscore -Wno-write-strings -fno-stack-protector
+CFLAGS = -m32 -g $(foreach dir,$(INCLUDES),-I$(dir)) -Wall -nostdlib -fno-builtin -fno-exceptions -fno-leading-underscore -Wno-write-strings -fno-stack-protector
 ASFLAGS = --32 -g
 LDFLAGS = -m elf_i386
 

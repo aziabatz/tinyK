@@ -1,6 +1,6 @@
 #include <ds/linkedlist.h>
 
-static heap_t * heap = NULL;
+static heap_t * _heap = NULL;
 
 static inline list_node_t * get_prev_node(list_t * list, list_node_t * node)
 {
@@ -20,6 +20,8 @@ list_t * new_list(heap_t * heap)
     if(!heap)
         return NULL;
 
+    _heap = heap;
+
     list_t * list = kmalloc(heap, sizeof(list_t));
     
     list->first = list->last = list->size = NULL;
@@ -34,7 +36,7 @@ void destroy_list(list_t * list)
         empty_list(list,true);
     }
 
-    kfree(heap, list);
+    kfree(_heap, list);
 }
 
 list_node_t * insert_head(list_t * list, void * data)
@@ -44,7 +46,7 @@ list_node_t * insert_head(list_t * list, void * data)
         return NULL;
     }
 
-    list_node_t * node = kmalloc(heap, sizeof(list_node_t));
+    list_node_t * node = kmalloc(_heap, sizeof(list_node_t));
     if(!node)
         return NULL;
 
@@ -71,7 +73,7 @@ list_node_t * insert_tail(list_t * list, void * data)
         return NULL;
     }
 
-    list_node_t * node = kmalloc(heap, sizeof(list_node_t));
+    list_node_t * node = kmalloc(_heap, sizeof(list_node_t));
     if(!node)
         return NULL;
 
@@ -107,7 +109,7 @@ void * remove_node(list_t * list, list_node_t * node)
     prev->next = node->next;
     void * data = node->data;
     
-    kfree(heap, node);
+    kfree(_heap, node);
     list->size--;
 
     return data;
@@ -154,8 +156,8 @@ void empty_list(list_t * list, bool clean_data)
     while(node)
     {
         if(clean_data)
-            kfree(heap, node->data);
-        kfree(heap, node);
+            kfree(_heap, node->data);
+        kfree(_heap, node);
         node = node->next;
     }
 

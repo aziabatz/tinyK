@@ -3,6 +3,9 @@
 #include <util.h>
 #include <stdbool.h>
 #include <dev/io/screen/text_color.h>
+#include <dev/io/port.h>
+
+#define COM1 0x3f8
 
 //screen related
 
@@ -13,12 +16,12 @@ static vga_spec_t vga_spec = {80,25,2,FRAMEBUFFER};
 
 void set_fg(uint8 fg)
 {
-    color = fg & 0xF;
+    color = (color & 0xF0) | fg & 0xF;
 }
 
 void set_bg(uint8 bg)
 {
-    color = (bg << 4) | color;
+    color = ((bg << 4) & 0xF0) | (color & 0xF);
 }
 
 static inline void clear_line(uint32 line)
@@ -92,10 +95,14 @@ static inline bool is_new_line()
     return false;
 }
 
+
+#define SERIAL_DEBUG 1
+
 void putc(char c)
 {
 #if SERIAL_DEBUG
     //write char to serial port
+    __out8(COM1, c);
 #endif
     char * fb = vga_spec.fb_start;
     switch(c)

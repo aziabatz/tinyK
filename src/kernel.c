@@ -50,6 +50,9 @@
 #include <mem/phys/pm_mgr.h>
 #include <mem/virt/vm_mgr.h>
 #include <mem/heap/heap.h>
+#include <cpu/task/process.h>
+#include <cpu/task/scheduler.h>
+#include <dev/io/screen/text_color.h>
 
 extern void __hold_on();
 extern void __boot_idpag();
@@ -74,6 +77,30 @@ void charmap()
             kprintf("%c ", 16 * i + j);
         }
         kprintf("\n");
+    }
+}
+
+void task_A(void)
+{
+    while(1)
+    {
+        //kprint("A");
+    }
+}
+
+void task_B(void)
+{
+    while(1)
+    {
+        //kprint("B");
+    }
+}
+
+void task_C(void)
+{
+    while(1)
+    {
+        //kprint("C");
     }
 }
 
@@ -110,35 +137,13 @@ int _kmain(pg_dir_t *kdir,
     pg_set_handler();
     kinfo(INFO, "Page Fault handler set");
 
-    timer_init();
+    
 
     
     pm_mgr_init(NULL, multiboot->mem_lower + multiboot->mem_upper, kdir);
 
     size_t total, free;
     pm_mgr_get_status(&total, &free);
-
-/*     kprintf("Physical Memory Manager:\n"
-        "Total pages: %u\n"
-        "Free pages: %u\n"
-        "Used pages: %u\n"
-        "Aprox. use: %u%%\n",
-        total, free, total-free, 100*(total-free)/total);
-
-    kprintf("Allocated %u block(s) at %x\n", 1, pm_mgr_alloc(1));
-    kprintf("Allocated %u block(s) at %x\n", 3, pm_mgr_alloc(3));
-    kprintf("Allocated %u block(s) at %x\n", 4, pm_mgr_alloc(4));
-    kprintf("Allocated %u block(s) at %x\n", 600, pm_mgr_alloc(600));
-
-
-    pm_mgr_get_status(&total, &free);
-
-    kprintf("Physical Memory Manager:\n"
-        "Total pages: %u\n"
-        "Free pages: %u\n"
-        "Used pages: %u\n"
-        "Aprox. use: %u%%\n",
-        total, free, total-free, 100*(total-free)/total); */
 
     heap_t * kheap = init_kheap(kdir, (PG_PTE_READ_WRITE | PG_PTE_PRESENT));
 
@@ -168,7 +173,19 @@ int _kmain(pg_dir_t *kdir,
     
     kdir = vm_clone_dir(kdir);
 
-    kprintf("cloned dir");
+    //TODO Get kheap from scheduler
+    set_kernel_heap(kheap);
 
+    proc_t * procA = new_process(1, &task_A, true);
+    proc_t * procB = new_process(2, &task_B, true);
+    proc_t * procC = new_process(3, &task_C, true);
+
+    init_sched(18, kheap);
+    add_process(procA, "procA");
+    add_process(procB, "procB");
+    add_process(procC, "procC");
+
+    timer_init();
+    set_bg(WHITE);set_fg(BLACK);
     __hold_on();
 }

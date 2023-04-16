@@ -2,7 +2,7 @@ megs: 32
 #romimage: file=/usr/local/bochs/1.4.1/BIOS-bochs-latest, address=0xf0000
 #vgaromimage: /usr/local/bochs/1.4.1/VGABIOS-elpin-2.40
 ata0-slave: type=cdrom, path="tinykernel.iso", status=inserted
-display_library: x, options="gui_debug"
+display_library: sdl2
 boot: cdrom
 log: bochsout.txt
 mouse: enabled=0

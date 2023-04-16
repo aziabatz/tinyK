@@ -9,6 +9,10 @@
         "assert.h": "c",
         "system.h": "c",
         "vm_mgr.h": "c",
-        "__locale": "c"
+        "__locale": "c",
+        "**.h": "c",
+        "linkedlist.h": "c",
+        "timer.h": "c",
+        "scheduler.h": "c"
     }
 }

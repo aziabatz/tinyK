@@ -47,7 +47,7 @@
 #define TICKS_PER_HOUR      TICKS_PER_MINUTE * MINUTES_PER_HOUR
 
 void timer_init();
-
+void set_sched_ticks(uint32 ticks);
 void fire(uint64 ticks);
 
 #endif

@@ -228,4 +228,3 @@ size_t kprintf(char * fmt, ...)
 
     va_end(args);
 }
-

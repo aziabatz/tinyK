@@ -4,6 +4,7 @@
 #include <types.h>
 #include "../regs.h"
 #include <mem/virt/paging.h>
+#include <mem/heap/heap.h>
 
 // ready
 #define PROC_STATE_DONE  0
@@ -16,7 +17,7 @@
 
 struct process_control_block
 {
-    int32 pid;
+    uint32 pid;
     reg_frame_t * cpu_frame;
     pg_dir_t * dir;
     uint8 state;
@@ -25,7 +26,8 @@ struct process_control_block
 
 typedef struct process_control_block proc_t;
 
-proc_t * new_process(int32 pid, uint32 entry, uint8 ring0);
+void set_kernel_heap(heap_t * kernel_heap);
+proc_t * new_process(uint32 pid, uint32 entry, uint8 ring0);
 void delete_process(proc_t * process);
 
 #endif

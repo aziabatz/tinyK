@@ -22,9 +22,9 @@
             "compilerPath": "/usr/local/bin/i686-elf-gcc",
             "cStandard": "c17",
             "cppStandard": "c++14",
-            "intelliSenseMode": "macos-gcc-x86"
+            "intelliSenseMode": "macos-gcc-x86",
+            "configurationProvider": "ms-vscode.makefile-tools"
         }
     ],
-
     "version": 4
 }
