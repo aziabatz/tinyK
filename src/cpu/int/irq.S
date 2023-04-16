@@ -93,10 +93,10 @@ _irq_common:
     
     addl $4, %esp
 
-    // mov %esp, %eax
-    // addl $12, %eax
-    // mov (%eax), %eax //Aqui la direccion de ESP antes del pushal
-    // mov %eax, new_esp
+    mov %esp, %eax
+    addl $12*4, %eax
+    //mov (%eax), %eax //Aqui la direccion de ESP antes del pushal
+    mov %eax, new_esp
     
 
     //pop %esp
@@ -113,7 +113,7 @@ _irq_common:
     
 
     popal
-    //mov new_esp, %esp
+    mov new_esp, %esp
 
     addl $8,%esp
 

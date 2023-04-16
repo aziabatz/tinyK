@@ -22,32 +22,29 @@ proc_t * new_process(uint32 pid, uint32 entry, uint8 ring0)
     reg_frame_t * frame = new_stack - sizeof(reg_frame_t);
 
 
-    *frame = (reg_frame_t) {
-        .gs = KERNEL_DS,
-        .fs = KERNEL_DS,
-        .es = KERNEL_DS,
-        .ds = KERNEL_DS,
+    frame->gs = KERNEL_DS;
+    frame->fs = KERNEL_DS;
+    frame->es = KERNEL_DS;
+    frame->ds = KERNEL_DS;
+    frame->edi = 0;
+    frame->esi = 0;
+    frame->ebp = 0;
+    frame->esp = 0;
+    frame->ebx = 0;
+    frame->edx = 0;
+    frame->ecx = 0;
+    frame->eax = 0   ;
+    frame->int_no = 0;
+    frame->err_code = 0;
+    frame->eip = entry;
+    frame->cs = KERNEL_CS;
+    frame->eflags = 0x202;
+    frame->useresp = 0;
+    frame->ss = KERNEL_DS;
 
-        .edi = 0,
-        .esi = 0,
-        .ebp = 0,
-        .esp = 0,
-        .ebx = 0,
-        .edx = 0,
-        .ecx = 0,
-        .eax = 0,
 
-        .int_no = 0,
-        .err_code = 0,
-
-        .eip = entry,
-        .cs = KERNEL_CS,
-        .eflags = 0x202,
-        .useresp = 0,
-        .ss = KERNEL_DS
-    };
-
-    frame->esp = frame + (4*12);
+    frame->esp = &(frame->int_no);
+    kprintf("esp:%x\n", frame->esp);
 
     process->pid = pid;
     process->cpu_frame = frame;

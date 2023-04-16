@@ -180,7 +180,7 @@ int _kmain(pg_dir_t *kdir,
     proc_t * procB = new_process(2, &task_B, true);
     proc_t * procC = new_process(3, &task_C, true);
 
-    init_sched(18, kheap);
+    init_sched(5, kheap);
     add_process(procA, "procA");
     add_process(procB, "procB");
     add_process(procC, "procC");
