@@ -48,7 +48,6 @@ __start:
 .global __hold_on
 .global __stop
 __hold_on:
-    hlt
     nop
     jmp __hold_on
 

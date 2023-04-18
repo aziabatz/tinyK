@@ -49,8 +49,8 @@ new_esp: .long 0
 .macro _irq_ num
 .global _irq_\num
 _irq_\num:
-    xchgw %bx, %bx
-    pushl $\num
+    //xchgw %bx, %bx
+    pushl $0
     pushl $\num+HW_OFFSET
     jmp _irq_common
 .endm
@@ -73,48 +73,25 @@ _irq_common:
 
     push %esp
 
-    // mov $before, %ebx
-    // push %ebx
-    // call kprintf
-    // add $4, %esp
-
-    // call kpanic_reg_dump
-
     call irq_handler
-
-    //xchgw %bx, %bx
-
-    // mov $after, %ebx
-    // push %ebx
-    // call kprintf
-    // add $4, %esp
-
-    // call kpanic_reg_dump
     
     addl $4, %esp
 
-    mov %esp, %eax
-    addl $12*4, %eax
-    //mov (%eax), %eax //Aqui la direccion de ESP antes del pushal
-    mov %eax, new_esp
     
-
-    //pop %esp
+    // mov %esp, %eax //la dir de la estructura regs en eax
+    // addl $7*4, %eax // Aqui se guarda la direccion del nuevo ESP
+    // mov (%eax), %eax //Aqui la direccion del nuevo ESP antes del pushal
+    // mov %eax, (new_esp)
+    
 
     popl %gs
     popl %fs
     popl %es
     popl %ds
-
-    
-    
-    //addl %esp, %eax
-    
-    
-
     popal
-    mov new_esp, %esp
-
+    
+    //mov (new_esp), %esp
+    xchgw %bx,%bx
     addl $8,%esp
 
 iret

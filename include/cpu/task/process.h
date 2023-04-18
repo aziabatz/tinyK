@@ -15,10 +15,12 @@
 // waiting
 #define PROC_STATE_WAIT  3
 
+
 struct process_control_block
 {
-    uint32 pid;
-    reg_frame_t * cpu_frame;
+    uint32 pid;//0
+    uint32 * stack_top;//4
+    uint32 * stack_current;//8
     pg_dir_t * dir;
     uint8 state;
     uint8 ring0;

@@ -2,6 +2,7 @@
 #include <mem/virt/vm_mgr.h>
 #include <cpu/task/gdt.h>
 
+#define KERNEL_STACK_SIZE 256
 
 static heap_t * heap = NULL;
 
@@ -15,11 +16,10 @@ proc_t * new_process(uint32 pid, uint32 entry, uint8 ring0)
     //reg_frame_t * frame = kmalloc(heap, sizeof(reg_frame_t));
     //pg_dir_t * dir =  TODO implement kmallocp
     proc_t * process = kmalloc(heap, sizeof(proc_t));
+    uint32 * new_stack = kmalloc(heap, KERNEL_STACK_SIZE);
 
-    uint8 * new_stack = kmalloc(heap, 256);
-
-    new_stack += 256;
-    reg_frame_t * frame = new_stack - sizeof(reg_frame_t);
+    //new_stack += KERNEL_STACK_SIZE;
+    reg_frame_t * frame = new_stack + KERNEL_STACK_SIZE - sizeof(reg_frame_t);
 
 
     frame->gs = KERNEL_DS;
@@ -33,7 +33,7 @@ proc_t * new_process(uint32 pid, uint32 entry, uint8 ring0)
     frame->ebx = 0;
     frame->edx = 0;
     frame->ecx = 0;
-    frame->eax = 0   ;
+    frame->eax = 0;
     frame->int_no = 0;
     frame->err_code = 0;
     frame->eip = entry;
@@ -42,12 +42,9 @@ proc_t * new_process(uint32 pid, uint32 entry, uint8 ring0)
     frame->useresp = 0;
     frame->ss = KERNEL_DS;
 
-
-    frame->esp = &(frame->int_no);
-    kprintf("esp:%x\n", frame->esp);
-
     process->pid = pid;
-    process->cpu_frame = frame;
+    process->stack_top = new_stack;
+    process->stack_current = frame;
     process->dir = 0;
     process->state = PROC_STATE_DONE;
     process->ring0 = true;
@@ -58,7 +55,7 @@ proc_t * new_process(uint32 pid, uint32 entry, uint8 ring0)
 
 void delete_process(proc_t * process)
 {
-    kfree(heap, process->cpu_frame);
+    kfree(heap, process->stack_top);
     //kfree(heap, process->dir);
     kfree(heap, process);
 }

@@ -84,7 +84,7 @@ void task_A(void)
 {
     while(1)
     {
-        //kprint("A");
+        kprintf("Proceso %c dice: %s\n",'A', "hola Mundo");
     }
 }
 
@@ -92,7 +92,7 @@ void task_B(void)
 {
     while(1)
     {
-        //kprint("B");
+        kprintf("Proceso %c dice: %s\n",'B', "hola Mundo");
     }
 }
 
@@ -100,7 +100,7 @@ void task_C(void)
 {
     while(1)
     {
-        //kprint("C");
+        kprintf("Proceso %c dice: %s\n",'C', "hola Mundo");
     }
 }
 
@@ -137,7 +137,7 @@ int _kmain(pg_dir_t *kdir,
     pg_set_handler();
     kinfo(INFO, "Page Fault handler set");
 
-    
+    timer_init();
 
     
     pm_mgr_init(NULL, multiboot->mem_lower + multiboot->mem_upper, kdir);
@@ -180,12 +180,12 @@ int _kmain(pg_dir_t *kdir,
     proc_t * procB = new_process(2, &task_B, true);
     proc_t * procC = new_process(3, &task_C, true);
 
-    init_sched(5, kheap);
+    init_sched(1, kheap);
     add_process(procA, "procA");
     add_process(procB, "procB");
     add_process(procC, "procC");
 
-    timer_init();
+    
     set_bg(WHITE);set_fg(BLACK);
     __hold_on();
 }
