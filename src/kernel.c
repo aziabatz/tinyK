@@ -84,7 +84,10 @@ void task_A(void)
 {
     while(1)
     {
-        kprintf("Proceso %c dice: %s\n",'A', "hola Mundo");
+        for (size_t i = 0; i < 256; i++)
+        {
+            kprintf("Proceso %c dice: %s-%d\n",'A', "hola Mundo",i);
+        }
     }
 }
 
@@ -92,7 +95,10 @@ void task_B(void)
 {
     while(1)
     {
-        kprintf("Proceso %c dice: %s\n",'B', "hola Mundo");
+        for (size_t i = 0; i < 256; i++)
+        {
+            kprintf("Proceso %c dice: %s-%d\n",'B', "hola Mundo",i);
+        }
     }
 }
 
@@ -100,7 +106,10 @@ void task_C(void)
 {
     while(1)
     {
-        kprintf("Proceso %c dice: %s\n",'C', "hola Mundo");
+        for (size_t i = 0; i < 256; i++)
+        {
+            kprintf("Proceso %c dice: %s-%d\n",'C', "hola Mundo",i);
+        }
     }
 }
 
