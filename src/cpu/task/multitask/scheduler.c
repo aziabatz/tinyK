@@ -75,7 +75,7 @@ static char * procs[] = {
 
 static inline save_context(reg_frame_t * regs, proc_t * current)
 {
-    kprintf("Copying %x to %x \n", regs, current->stack_current);
+    //kprintf("Copying %x to %x \n", regs, current->stack_current);
     memcpy(&temp_frame, regs, sizeof(reg_frame_t));
     current->stack_current = regs;
     memcpy(current->stack_current, &temp_frame, sizeof(reg_frame_t));
@@ -119,7 +119,7 @@ static do_switch(reg_frame_t * regs, proc_t * current, proc_t * next)
 
 void pick_next(reg_frame_t * regs)
 {
-    kprintf("picking\n");
+    //kprintf("picking\n");
     if(tasks->size == 0)
         return;
 

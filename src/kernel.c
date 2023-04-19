@@ -86,7 +86,7 @@ void task_A(void)
     {
         for (size_t i = 0; i < 256; i++)
         {
-            kprintf("Proceso %c dice: %s-%d\n",'A', "hola Mundo",i);
+            kprintf("Proceso %c dice: %s-%d",'A', "hola Mundo",i);
         }
     }
 }
@@ -97,7 +97,7 @@ void task_B(void)
     {
         for (size_t i = 0; i < 256; i++)
         {
-            kprintf("Proceso %c dice: %s-%d\n",'B', "hola Mundo",i);
+            kprintf("Proceso %c dice: %s-%d",'B', "hola Mundo",i);
         }
     }
 }
@@ -108,7 +108,7 @@ void task_C(void)
     {
         for (size_t i = 0; i < 256; i++)
         {
-            kprintf("Proceso %c dice: %s-%d\n",'C', "hola Mundo",i);
+            kprintf("Proceso %c dice: %s-%d",'C', "hola Mundo",i);
         }
     }
 }
@@ -146,7 +146,7 @@ int _kmain(pg_dir_t *kdir,
     pg_set_handler();
     kinfo(INFO, "Page Fault handler set");
 
-    timer_init();
+    //timer_init();
 
     
     pm_mgr_init(NULL, multiboot->mem_lower + multiboot->mem_upper, kdir);
@@ -196,5 +196,6 @@ int _kmain(pg_dir_t *kdir,
 
     
     set_bg(WHITE);set_fg(BLACK);
+	timer_init();
     __hold_on();
 }
