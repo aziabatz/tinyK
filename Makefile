@@ -21,7 +21,7 @@ INCLUDES = ./include/ ./lib/include/
 LIBRARIES = ./lib/minlib.a
 
 define GRUB_ENTRY
-"set timeout=5\n\
+"set timeout=1\n\
 set default=0\n\
 \n\
 menuentry \"$(KERNEL_NAME)\" {\n\t\

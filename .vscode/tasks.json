@@ -8,7 +8,7 @@
         {
             "label": "Lanzar QEMU",
             "type": "shell",
-            "command": "echo QEMU& qemu-system-i386 -kernel ${workspaceFolder}/tinykernel.bin -S -gdb tcp::1234 -m 512",
+            "command": "echo QEMU& qemu-system-i386 -vga std ${workspaceFolder}/tinykernel.iso -S -gdb tcp::1234 -m 512",
             "isBackground": true,
             "problemMatcher": {
                 "pattern": {

@@ -1,7 +1,7 @@
 //Multiboot structure
 .set MAGIC, 0x1badb002
 .set STACK_SIZE, 4096
-.set FLAGS, (1<<0 | 1<<1)
+.set FLAGS, (1<<0 | 1<<1 | 1 << 2)
 .set CHECKSUM, -(MAGIC + FLAGS)
 
 
@@ -9,6 +9,16 @@
     .long MAGIC
     .long FLAGS
     .long CHECKSUM
+    .long 0
+    .long 0
+    .long 0
+    .long 0
+    .long 0
+
+    .long 0
+    .long 800
+    .long 600
+    .long 24
 
 
 //Kernel start code
