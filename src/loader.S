@@ -88,7 +88,7 @@ __boot_idpag:
     call __load_pd
     pop %ebx
 
-    //call __set_pg //set paging flag
+    call __set_pg //set paging flag
 ret
 
 .section .bss

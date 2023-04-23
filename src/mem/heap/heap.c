@@ -86,7 +86,7 @@ static heap_block_t *split_block(heap_block_t *block, size_t size)
     assert(block != NULL && (block->length >= (size + sizeof(heap_block_t))));
 
     // Crear un nuevo bloque en la dirección de memoria correspondiente
-    heap_block_t *new_block = (heap_block_t *)(block + size + sizeof(heap_block_t));
+    heap_block_t *new_block = (block->base + size);
     
     // Establecer los atributos del nuevo bloque
     new_block->mark = HEAP_BLOCK_MARK;
