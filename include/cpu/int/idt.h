@@ -68,6 +68,11 @@
 #define KERNEL_CS 0x08
 #endif
 
+#ifndef KERNEL_DS
+/// \brief Selector por defecto del segmento de datos del núcleo.
+#define KERNEL_DS 0x10
+#endif
+
 /**
  * \brief Descriptor de puerta de interrupción en la tabla
  * 

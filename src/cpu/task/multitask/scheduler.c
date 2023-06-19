@@ -29,41 +29,6 @@ void init_sched(uint32 ticks, heap_t * heap)
     quantum = ticks;
     set_sched_ticks(quantum);
     tasks = new_list(heap);
-
-    kernel_task_cpu_frame =(reg_frame_t) {
-
-        .gs = 0x10,
-        .fs = 0x10,
-        .es = 0x10,
-        .ds = 0x10,
-
-        .edi = 0,
-        .esi = 0,
-        .ebp = 0,
-        .esp = 0,
-        .ebx = 0,
-        .edx = 0,
-        .ecx = 0,
-        .eax = 0,
-
-        .int_no = 0,
-        .err_code = 0,
-
-        .eip = &__hold_on,
-        .cs = KERNEL_CS,
-        .eflags = 0x202,
-        .useresp = 0,
-        .ss = 0x10
-    };
-
-    //kernel_task.cpu_frame = &kernel_task_cpu_frame;
-
-    //kernel_task.cpu_frame = &kernel_task_cpu_frame;
-    kernel_task.pid = 0;
-    kernel_task.ring0 = true;
-    kernel_task.state = PROC_STATE_EXEC;
-
-    //add_process(&kernel_task, "kernel");
 }
 
 static char * procs[] = {
@@ -80,42 +45,11 @@ static inline save_context(reg_frame_t * regs, proc_t * current)
     current->stack_current = regs;
     memcpy(current->stack_current, &temp_frame, sizeof(reg_frame_t));
     
-    // current->cpu_frame->gs = regs->gs;
-    // current->cpu_frame->fs = regs->fs;
-    // current->cpu_frame->es = regs->es;
-    // current->cpu_frame->ds = regs->ds;
-    // current->cpu_frame->edi = regs->edi;
-    // current->cpu_frame->esi = regs->esi;
-    // current->cpu_frame->ebp = regs->ebp;
-    // current->cpu_frame->esp = regs->esp;
-    // current->cpu_frame->ebx = regs->ebx;
-    // current->cpu_frame->edx = regs->edx;
-    // current->cpu_frame->ecx = regs->ecx;
-    // current->cpu_frame->eax = regs->eax;
-    // current->cpu_frame->int_no = regs->int_no;
-    // current->cpu_frame->err_code = regs->err_code;
-    // current->cpu_frame->eip = regs->eip;
-    // current->cpu_frame->cs = regs->cs;
-    // current->cpu_frame->eflags = regs->eflags;
-    // current->cpu_frame->useresp = regs->useresp;
-    // current->cpu_frame->ss = regs->ss;
 }
 
 static inline restore_context(){/*Unused*/}
 
-static do_switch(reg_frame_t * regs, proc_t * current, proc_t * next)
-{
-    
-    //asm volatile("xchg %bx,%bx");
-    
-   // memcpy(regs, next->cpu_frame, sizeof(reg_frame_t));
-    //kprintf("Copying %x to %x \n", next->cpu_frame, regs);
-    //regs->esp = current->cpu_frame->esp;
-    // if(current != next && regs->esp == 0)
-    // {
-    //     regs->esp = regs->useresp-(4 * 5);
-    // }
-}
+static do_switch(reg_frame_t * regs, proc_t * current, proc_t * next){/*Unused*/}
 
 void pick_next(reg_frame_t * regs)
 {

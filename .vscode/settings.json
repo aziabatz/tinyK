@@ -13,6 +13,7 @@
         "**.h": "c",
         "linkedlist.h": "c",
         "timer.h": "c",
-        "scheduler.h": "c"
+        "scheduler.h": "c",
+        "pic.h": "c"
     }
 }
