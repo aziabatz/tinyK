@@ -168,7 +168,13 @@ int _kmain(pg_dir_t *kdir,
     
     kdir = vm_clone_dir(kdir);
 
-    kprintf("cloned dir");
+    kprintf("cloned dir\n");
+
+    driver_data_t bad_data;
+    bad_data.data = "HOLAMUNDO";
+    bad_data.info = NULL;
+    bad_data.size = strlen(bad_data.data); 
+    vga_write(&bad_data);
 
     __hold_on();
 }

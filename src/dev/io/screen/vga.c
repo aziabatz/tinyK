@@ -3,6 +3,7 @@
 #include <util.h>
 #include <stdbool.h>
 #include <dev/io/screen/text_color.h>
+#include <debug.h>
 
 //screen related
 
@@ -175,13 +176,11 @@ int32 vga_read(driver_data_t * data)
 
 int32 vga_write(driver_data_t * data)
 {
-#if false
-    if(data->info != vga_driver.info)
+    if(data->info->did != vga_driver.info->did)
     {
-        //TODO warn
+        kinfo(WARNING, "The data received is not for the VGA driver!");
         return NULL;
     }
-#endif
 
     if(data->size == 0)
     {
