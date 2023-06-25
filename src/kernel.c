@@ -195,7 +195,6 @@ int _kmain(pg_dir_t *kdir,
     add_process(procC, "procC");
 
     
-    set_bg(WHITE);set_fg(BLACK);
 	timer_init();
     __hold_on();
 }
