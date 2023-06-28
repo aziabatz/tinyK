@@ -43,8 +43,6 @@
 .macro _irq_ num
 .global _irq_\num
 _irq_\num:
-    //cli
-    xchg %bx,%bx
     pushl $\num
     pushl $\num+HW_OFFSET
     jmp _irq_common
@@ -58,11 +56,11 @@ _irq_common:
     pushl %fs
     pushl %gs
 
-    // mov $0x10, %ax
-    // mov %ax, %ds
-    // mov %ax, %es
-    // mov %ax, %fs
-    // mov %ax, %gs
+    mov $0x10, %ax
+    mov %ax, %ds
+    mov %ax, %es
+    mov %ax, %fs
+    mov %ax, %gs
 
     cld
 
