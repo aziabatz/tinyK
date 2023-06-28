@@ -111,7 +111,7 @@ uint8 add_process(proc_t * new, char * new_alias)
     if(insert_tail(tasks, new))
     {
         kprintf("Registered new process(%s) with EIP: %x and stack: %x\n",
-            0, new->stack_current);
+            0, ((reg_frame_t*)new->stack_current)->eip , new->stack_current);
     }
     
     return true;
