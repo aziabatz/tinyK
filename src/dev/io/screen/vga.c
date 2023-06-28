@@ -7,7 +7,7 @@
 //screen related
 
 static uint16 x = 0, y = 0;
-static uint8 color = BLUE<<4 | WHITE;
+static uint8 color = BLACK<<4 | WHITE;
 
 static vga_spec_t vga_spec = {80,25,2,FRAMEBUFFER};
 

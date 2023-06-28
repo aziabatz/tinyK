@@ -11,7 +11,7 @@ _user_stack_bottom:
 _user_stack:
 
 fmt: .asciz "%s\n"
-hola: .asciz "Hola Mundo desde espacio de usuario!"
+hola: .asciz "Hola Mundo desde espacio de usuario!\n"
 
 .section .text
 .global __jump_user
@@ -51,10 +51,10 @@ user_entry:
 
     add $8, %esp
 
-    w:
+    
     nop
     nop
     nop
-    jmp w
+    jmp user_entry
 
 
