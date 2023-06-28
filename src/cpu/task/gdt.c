@@ -24,7 +24,7 @@ void gdt_init()
     //null entry
     gdt_set_gate(0,0,0,0,0);
     //kernel code segment
-    gdt_set_gate(1, 0xFFFFFFFF, 0x0, (GDT_P|GDT_S|GDT_EX|GDT_DC), (GDT_G|GDT_DB));
+    gdt_set_gate(1, 0xFFFFFFFF, 0x0, (GDT_P|GDT_S|GDT_EX), (GDT_G|GDT_DB));
     //kernel data segment
     gdt_set_gate(2, 0xFFFFFFFF, 0x0, (GDT_P|GDT_S|GDT_RW), (GDT_G|GDT_DB));
 
