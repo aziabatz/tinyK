@@ -22,11 +22,11 @@ void gdt_set_gate(uint32 entry,
 void gdt_init()
 {
     //null entry
-    gdt_set_gate(0,0,0,0,0);
+    gdt_set_gate(GDT_NULL_ENTRY,0,0,0,0);
     //kernel code segment
-    gdt_set_gate(1, 0xFFFFFFFF, 0x0, (GDT_P|GDT_S|GDT_EX), (GDT_G|GDT_DB));
+    gdt_set_gate(GDT_KERNEL_CS_ENTRY, 0xFFFFFFFF, 0x0, (GDT_P|GDT_S|GDT_EX), (GDT_G|GDT_DB));
     //kernel data segment
-    gdt_set_gate(2, 0xFFFFFFFF, 0x0, (GDT_P|GDT_S|GDT_RW), (GDT_G|GDT_DB));
+    gdt_set_gate(GDT_KERNEL_DS_ENTRY, 0xFFFFFFFF, 0x0, (GDT_P|GDT_S|GDT_RW), (GDT_G|GDT_DB));
 
     gdt.base = (uint32) &gdt_entries;
     gdt.limit = (sizeof(gdt_entry_t)*MAX_GDT_ENTRIES)-1;

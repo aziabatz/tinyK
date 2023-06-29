@@ -7,6 +7,10 @@
 #define KERNEL_DS 0x10
 #define MAX_GDT_ENTRIES 10
 
+#define GDT_NULL_ENTRY 0
+#define GDT_KERNEL_CS_ENTRY 1
+#define GDT_KERNEL_DS_ENTRY 2
+
 //access
 #define GDT_P (1 << 7)
 #define GDT_DPL(dpl) (dpl << 5)
