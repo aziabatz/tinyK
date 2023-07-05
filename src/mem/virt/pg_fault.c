@@ -59,7 +59,6 @@ const char * pg_fault_description[8] =
 
 
 
-//TODO exception handler make a function type
 
 
 void page_fault(reg_frame_t * regs)

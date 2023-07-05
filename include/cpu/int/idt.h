@@ -55,7 +55,7 @@
 #define IDT_GATE_TRAP16 0x07
 /// \brief Bandera para interrupciones con selectores de 16 bits
 #define IDT_GATE_INT32 0x0E
-/// \brief Bandera para interrupciones con selectores de 32 bits
+/// \brief Bandera para interrupciones software con selectores de 32 bits
 #define IDT_GATE_TRAP32 0x0F
 
 /// \brief Macro para asignar bits del anillo de privilegios de la interrupción

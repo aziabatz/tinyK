@@ -143,8 +143,6 @@ static uint32 first_fit(size_t pages)
 
 phys_t pm_mgr_alloc(size_t pages)
 {
-    //assert(PG_ALIGNED_4K(address));
-    //TODO BETTER LEGEABILITY
     bool best_fit = (freed_blocks >= (pm_manager.bitmap_length/2)) ? true : false;
 
     // Recibimos el bloque valido si existe
@@ -188,12 +186,7 @@ static inline virt_t map_to_dir(pg_dir_t * dir, phys_t paddr, virt_t vaddr, page
     {
         kinfo(ERROR, "Page Table not present. NOT IMPLEMENTED");
         kprintf("virt: 0x%x\n", vaddr);
-        /*FIXME implementar:
-            - bitmap maximo ocupa 128 kb
-            - Añadir el tamaño maximo de bitmap calculado
-            - Si la dir. es antes de alineado 0x1000, esa dir alineada sera la de la tabla
-            - Si la dir. es despues, coger la siguiente dir alin. 0x1000
-        */
+        
         __stop();
     }
 
@@ -267,7 +260,6 @@ void * pm_mgr_init(multiboot_memory_map_t *mb_map, size_t memory_size, pg_dir_t 
 
     pm_manager.bitmap[0] = BLOCKS_ALL_USED;
 
-    //TODO MARCAR USADOS SEGUN PAGINAS DEL KDIR
 
     pg_table_t * kernel_page_table = dir->tables[0];
     kernel_page_table = ((virt_t)kernel_page_table) & PG_PDE_FRAME;
@@ -281,7 +273,6 @@ void * pm_mgr_init(multiboot_memory_map_t *mb_map, size_t memory_size, pg_dir_t 
     }
 }
 
-// FIXME Si se recibe NULL en alguno, no escribir nada en los punteros
 void pm_mgr_get_status(size_t * total, size_t * free){
     *total = pm_manager.bitmap_length * BLOCKS_PER_BYTE;
     *free = pm_manager.free_blocks;

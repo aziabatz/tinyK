@@ -3,7 +3,6 @@
 
 #ifndef bool
     #define bool _Bool
-// TODO check doesnt break _Bool
 #ifndef _Bool
     #define bool unsigned char
 #endif

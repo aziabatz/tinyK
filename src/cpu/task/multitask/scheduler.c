@@ -87,10 +87,6 @@ void pick_next(reg_frame_t * regs)
     //do_switch(regs, current_proc, next_proc);
     next_proc->state = PROC_STATE_EXEC;
 
-    /* 
-    TODO change paging directory
-    */
-
     running = next;
     pic_ack(regs->int_no>=40);
 

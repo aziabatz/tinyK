@@ -50,14 +50,11 @@ typedef struct driver_data driver_data_t;
 typedef int32 (*driver_read_t)(driver_data_t*);
 typedef int32 (*driver_write_t)(driver_data_t*);
 
-//typedef uint8 (*driver_install_t)(driver_info_t*);
 
-//TODO open & close operations
 struct driver{
     driver_info_t * info;
     driver_read_t read;
     driver_write_t write;
-//    driver_install_t install;
 };
 
 typedef struct driver driver_t;

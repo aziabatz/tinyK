@@ -37,7 +37,6 @@ static inline void clear_line(uint32 line)
 
 void clear_lines(uint32 from, uint32 to)
 {
-    //TODO add verification for lines below screen max
     for(size_t i = from; i < to; i++)
     {
         clear_line(i);
@@ -108,22 +107,19 @@ void putc(char c)
     switch(c)
     {
         case 0x08:
-            //TODO backspace key
+            //backspace key
             break;
         case '\t':
             x = (x+8) & ~(8-1);
             break;
         case '\r':
-            //TODO carriage return
             x = 0;
             break;
         case '\n':
-            //TODO line break
             x = 0;
             y ++;
             break;
         default:
-            //FIXME check char is printable
             fb[(y*vga_spec.width+x)*vga_spec.depth] = c;
             fb[(y*vga_spec.width+x)*vga_spec.depth+1] = color;
             x++;
@@ -185,7 +181,6 @@ int32 vga_write(driver_data_t * data)
 #if false
     if(data->info != vga_driver.info)
     {
-        //TODO warn
         return NULL;
     }
 #endif

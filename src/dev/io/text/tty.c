@@ -169,10 +169,7 @@ size_t kprintf(char * fmt, ...)
     while((c=*fmt++) != NULL)
     {
 
-            /*TODO vga must offer a way to put a char
-            without sending a driver data struct, as it is
-            very slow
-            */
+
 
         if(c != '%')
         {
@@ -202,12 +199,10 @@ size_t kprintf(char * fmt, ...)
                 case 'I':
                 case 'd':
                 case 'D':
-                    //TODO int
                     kprint_dec(va_arg(args, int));
                     break;
                 case 'u':
                 case 'U':
-                    //TODO unsigned
                     uint32 u =va_arg(args, uint32);
                     kprint_u(u);
                     break;

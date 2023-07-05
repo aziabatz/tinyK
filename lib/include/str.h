@@ -17,6 +17,5 @@ char * strdup(const char * src);
 
 size_t strlen(const char * src);
 
-//TODO strerror in system utils
 
 #endif

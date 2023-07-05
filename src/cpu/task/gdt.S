@@ -54,7 +54,6 @@ long_jump:
     orl $1, %eax
     movl %eax, %cr0
 
-    //TODO needed??
     cli
 
     movw $0x10, %ax

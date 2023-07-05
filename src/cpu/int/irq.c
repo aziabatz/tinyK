@@ -119,9 +119,6 @@ void irq_handler(reg_frame_t * regs)
             handler(regs);
         }
            
-        //TODO check spurious interrupts
-
-        //if irq is from slave pic, send EOI to both pic
         bool is_slave = regs->int_no >= 40;
         pic_ack(is_slave);
     }

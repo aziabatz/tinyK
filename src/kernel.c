@@ -182,7 +182,6 @@ int _kmain(pg_dir_t *kdir,
     
     kdir = vm_clone_dir(kdir);
 
-    //TODO Get kheap from scheduler
     set_kernel_heap(kheap);
 
     proc_t * procA = new_process(1, &task_A, true);

@@ -215,7 +215,6 @@ bool kfree(heap_t * heap, virt_t address)
     heap_block_t * next = found->next;
 
 
-    // TODO Mejorar if-else
 
     //Ambos libres
     if((prev && !prev->used) && (next && !next->used))

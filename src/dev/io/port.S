@@ -8,7 +8,6 @@
 .global __in32
 
 
-//FIXME IMPORTANT!!! check stack offset
 
 __out8:
     movw 4(%esp), %dx

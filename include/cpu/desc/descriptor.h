@@ -44,18 +44,18 @@
 #include <types.h>
 
 /**
- * \brief Descriptor de segmento
+ * \brief Descriptor
  * 
  */
 struct descriptor
 {
-    /// \brief Límite(tamaño) del segmento
+    /// \brief Límite(tamaño)
     uint16 limit;
-    /// \brief Dirección base del segmento
+    /// \brief Dirección base
     uint32 base;
 }__attribute__((packed));
 
-/// \brief Tipo descriptor de segmento
+/// \brief Tipo descriptor
 typedef struct descriptor descriptor_t;
 
 #endif

@@ -38,7 +38,6 @@
  * \brief 
  */
 
-//TODO brief
 
 #ifdef TK_USER_SPACE
 __assert(const char * msg, const char * file, unsigned int line)
