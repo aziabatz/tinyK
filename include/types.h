@@ -39,31 +39,4 @@ typedef unsigned int uint32;
 typedef signed long long int int64;
 typedef unsigned long long int uint64;
 
-//typedef char* string;
-
-//typedef unsigned int size_t;
-
-/* typedef struct timestr{
-  uint32 hour;
-  uint32 mins;
-  uint32 secs;
-}ktime_t;
-
-typedef uint32 posixtime_t; */
-
-
-//static int halt() { asm("jmp _stop"); }
-
-
-/* #define BAD(s, f, l) ({print(s);NL;\
-print(f);NL;\
-print(l);NL;\
-halt();\
-})
-
-#define ASSERT_NULL(x) ((x == NULL) ? BAD("NULLPTR", __FILE__, __LINE__) : NULL) */
-
-
-//#define sizeof(x) ((char *)(&x + 1) - (char *)&x)
-
 #endif

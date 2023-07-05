@@ -37,12 +37,18 @@
 #include <cpu/int/irq.h>
 #include <printf.h>
 
+#define TIMER_MSG\ 
+"+--------------------------------------------------------------------+\n"\
+"|Desde modo usuario a supervisor. RELOJ ticks disparados: %d   |\n"\
+"+--------------------------------------------------------------------+\n"
+
+
 volatile uint64 ticks;
 
 void fire_tick(reg_frame_t * regs)
 {
     ticks++;
-    kprintf("PIT %d\n", ticks);
+    kprintf(TIMER_MSG, ticks);
 }
 
 void timer_init()

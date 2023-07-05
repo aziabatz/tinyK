@@ -37,7 +37,6 @@
  * \brief
  */
 
-//TODO memsize memmap pmm
 
 #ifndef TK_PHYSMEM_H
 #define TK_PHYSMEM_H
